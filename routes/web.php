@@ -11,3 +11,4 @@ require __DIR__.'/auth.php';
 Route::get('/index', function () {
     return view('index'); 
 });
+Route::get('/visualiza_loja/{id_loja}',[SamsungController::class,'visualiza_samsung']);

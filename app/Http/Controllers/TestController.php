@@ -66,6 +66,8 @@ class TestController extends Controller
     {
     $samsung=SamsungModel::find($id);
 
+    return view('visualiza_cadastro')->with('id_samsung', $samsung->id);
+    
     $data = [
             'erro' => 'n',
             'samsung' => $samsung,

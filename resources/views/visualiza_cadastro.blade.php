@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="index.js"></script>
+
     <style>
         :root {
             --primary-purple: #6f42c1;
@@ -116,6 +117,8 @@
 </head>
 <body>
 
+
+
 <nav class="navbar navbar-custom mb-5 shadow">
     <div class="container d-flex justify-content-between align-items-center">
         <a class="navbar-brand text-white fw-bold italic" href="#">
@@ -155,7 +158,7 @@
                                 <input type="number" id="ano" class="form-control" placeholder="2024">
                             </div>
                         </div>
-                        <button type="button" id="salvaraparelho" class="btn btn-purple w-100 mt-3">
+                        <button type="button" id="salvaraparelhooo" class="btn btn-purple w-100 mt-3">
                             <i class="fa-solid fa-cloud-arrow-up me-2"></i> REGISTRAR ITEM
                         </button>
                     </form>
@@ -239,9 +242,8 @@
 
     
 
-window.onload = carregarProdutos;
+    window.onload = carregarProdutos;
 </script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
