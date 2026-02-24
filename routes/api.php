@@ -13,3 +13,6 @@ Route::get('/soma', [TestController::class,'soma']);
 Route::post('/salva_samsung', [TestController::class,'salva_samsung']);
 Route::get('/exibe_samsung/{id}',[TestController::Class,'exibe_samsung']);
 Route::get('/todos_samsung',[TestController::Class,'todos_samsung']);
+Route::put('/altera_loja', [TestController::Class, 'altera_loja']);
+Route::delete('/d_samsung', [TestController::class, 'deletar_samsung']);
+
