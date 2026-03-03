@@ -547,8 +547,8 @@
             btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> REGISTRANDO...');
 
             $.ajax({
-                url: "/api/altera_loja",
-                method: "PUT",
+                url: "/api/salva_samsung",
+                method: "POST",
                 data: {
                     aparelho: $("#aparelho").val(),
                     modelo: $("#modelo").val(),
