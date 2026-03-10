@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="index.js"></script>
 
     <style>
@@ -202,24 +203,29 @@
 </div>
 
 <script>
-    
-    const API_URL = '/api';
 
-  
-    async function carregarProdutos() {
-        const tabela = document.getElementById('tabelaCorpo');
-        const loader = document.getElementById('loader');
-        
-        tabela.innerHTML = ''; 
-        loader.classList.remove('d-none');
+const API_URL = '/api';
 
-        try {
-            const response = await fetch(`${API_URL}/todos_samsung`);
-            const data = await response.json();
+function carregarProdutos(){
 
-            if (data.samsung && data.samsung.length > 0) {
-                data.samsung.forEach(item => {
-                    tabela.innerHTML += `
+    const tabela = $('#tabelaCorpo');
+    const loader = $('#loader');
+
+    tabela.html('');
+    loader.removeClass('d-none');
+
+    $.ajax({
+        url: API_URL + '/todos_samsung',
+        method: 'GET',
+        dataType: 'json',
+
+        success: function(data){
+
+            if(data.samsung && data.samsung.length > 0){
+
+                data.samsung.forEach(function(item){
+
+                    tabela.append(`
                         <tr>
                             <td><span class="badge-id">#${item.id}</span></td>
                             <td><span class="fw-bold">${item.aparelho}</span></td>
@@ -227,22 +233,38 @@
                             <td><i class="fa-solid fa-palette me-1 text-muted small"></i> ${item.cor}</td>
                             <td><span class="badge rounded-pill bg-light text-dark border">${item.ano}</span></td>
                         </tr>
-                    `;
+                    `);
+
                 });
+
             } else {
-                tabela.innerHTML = '<tr><td colspan="5" class="text-center py-5">Nenhum produto cadastrado no momento.</td></tr>';
+
+                tabela.html('<tr><td colspan="5" class="text-center py-5">Nenhum produto cadastrado no momento.</td></tr>');
+
             }
-        } catch (error) {
-            console.error("Erro ao carregar:", error);
-            tabela.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-danger">Erro ao conectar com a API.</td></tr>';
-        } finally {
-            loader.classList.add('d-none');
+
+        },
+
+        error: function(){
+
+            tabela.html('<tr><td colspan="5" class="text-center py-5 text-danger">Erro ao conectar com a API.</td></tr>');
+
+        },
+
+        complete: function(){
+
+            loader.addClass('d-none');
+
         }
-    }
 
-    
+    });
 
-    window.onload = carregarProdutos;
+}
+
+$(document).ready(function(){
+    carregarProdutos();
+});
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

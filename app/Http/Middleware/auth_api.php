@@ -26,19 +26,14 @@ class auth_api
                 $request->usuario = $usuario;
                 $request->token = $token;
                 return $next($request);
-
             }else{
 
             $data=[
 
                 "erro" => 's',
                 "msg" => 'Token invalido'
-
             ];
-
-            }
-
-            
+            }            
           return response()->json($data,200);
         }else{
 

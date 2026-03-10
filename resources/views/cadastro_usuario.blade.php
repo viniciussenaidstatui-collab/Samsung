@@ -165,47 +165,70 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-    document.getElementById('formCadastro').addEventListener('submit', function(e) {
-        e.preventDefault();
 
-        const dados = {
-            nome: document.getElementById('nome').value,
-            email: document.getElementById('email').value,
-            telefone: document.getElementById('telefone').value,
-            nascimento: document.getElementById('nascimento').value,
-            genero: document.getElementById('genero').value,
-            senha: document.getElementById('senha').value
-        };
+$('#formCadastro').on('submit', function(e){
 
-        fetch('/api/cadastro_usuario', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(dados)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.erro === 'n') {
+    e.preventDefault();
+
+    const dados = {
+        nome: $('#nome').val(),
+        email: $('#email').val(),
+        telefone: $('#telefone').val(),
+        nascimento: $('#nascimento').val(),
+        genero: $('#genero').val(),
+        senha: $('#senha').val()
+    };
+
+    $.ajax({
+        url: '/api/cadastro_usuario',
+        method: 'POST',
+        contentType: 'application/json',
+        dataType: 'json',
+        data: JSON.stringify(dados),
+
+        success: function(data){
+
+            if(data.erro === 'n'){
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Bem-vindo!',
                     text: 'Usuário ' + data.data.nome + ' cadastrado com sucesso!',
                     confirmButtonColor: '#6f42c1'
-                }).then(() => {
-                    window.location.href = '/inicio'; // Redireciona após sucesso
+                }).then(function(){
+
+                    window.location.href = '/inicio';
+
                 });
+
             } else {
-                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Erro ao cadastrar.' });
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Erro ao cadastrar.'
+                });
+
             }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            Swal.fire({ icon: 'error', title: 'Erro de conexão', text: 'Não foi possível falar com o servidor.' });
-        });
+
+        },
+
+        error: function(){
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro de conexão',
+                text: 'Não foi possível falar com o servidor.'
+            });
+
+        }
+
     });
+
+});
+
 </script>
 </body>
 </html>
