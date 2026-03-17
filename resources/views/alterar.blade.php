@@ -8,7 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
+    <script>
+        const token = localStorage.getItem('user_token');
+        if (!token) {
+            window.location.href = '/login';
+        }
+    </script>
+    
     <style>
+        .list-group-item-action:hover {
+        background-color: var(--soft-purple) !important;
+        color: var(--primary-purple) !important;
+    }
+    .fw-600 { font-weight: 600; }
+    .navbar-toggler:focus { box-shadow: none; }
+    .dropdown-item:active { background-color: var(--primary-purple); }
         :root {
             --primary-purple: #6f42c1;
             --soft-purple: #f3f0ff;
@@ -117,7 +131,7 @@
 
         @keyframes pulse {
             0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
+            70% { opacity: 0.6; transform: scale(1.1); }
             100% { opacity: 1; transform: scale(1); }
         }
 
@@ -145,28 +159,100 @@
 <body>
     <input type="hidden" id="id_loja" value="{{$loja->id}}">
 
-    <nav class="navbar navbar-custom mb-5 shadow">
-        <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand text-white fw-bold italic" href="#">
-                <i class="fa-solid fa-mobile-screen-button me-2"></i> SAMSUNG/STORE
-            </a>
-            <div class="d-flex align-items-center gap-4">
-                <span class="text-white-50 small">
-                    <span class="status-dot"></span> Sistema Ativo
-                </span>
-                <a href="/index" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Voltar
+    <nav class="navbar navbar-custom shadow-sm">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler text-white border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <i class="fa-solid fa-bars-staggered fs-4"></i>
+                </button>
+                <a class="navbar-brand text-white d-flex align-items-center mb-0" href="#">
+                    <i class="fa-solid fa-mobile-screen-button me-2"></i>
+                    SAMSUNG <span class="fw-light ms-2 d-none d-sm-inline opacity-75">Admin</span>
                 </a>
             </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative cursor-pointer text-white" title="Notificações">
+                    <i class="fa-regular fa-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.5rem;">
+                        3
+                    </span>
+                </div>
+                <div class="vr mx-2 opacity-25 text-white"></div>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=fff&color=6f42c1&bold=true" class="rounded-circle border border-2 border-white" width="35" alt="Avatar">
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 rounded-4">
+                        <li><h6 class="dropdown-header">Olá, Administrador</h6></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fa-regular fa-circle-user me-2"></i>Meu Perfil</a></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fa-regular fa-gear me-2"></i>Configurações</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sair</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </nav>
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-start border-0 shadow" tabindex="-1" id="sidebarMenu" style="width: 280px; background: var(--bg-page);">
+    <div class="offcanvas-header border-bottom py-4" style="background: var(--primary-purple);">
+        <h5 class="offcanvas-title text-white fw-bold" id="offcanvasLabel">
+            <i class="fa-solid fa-sliders me-2"></i>MENU GESTOR
+        </h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div class="list-group list-group-flush mt-3">
+            <a href="/inicio" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-house text-primary" style="width: 20px;"></i>
+                <span class="fw-600">Dashboard Geral</span>
+            </a>
+            <a href="/index" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-plus-circle text-success" style="width: 20px;"></i>
+                <span class="fw-600">Adicionar Aparelho</span>
+            </a>
+            <a href="/visualiza_loja" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-boxes-stacked text-warning" style="width: 20px;"></i>
+                <span class="fw-600">Controle de Estoque</span>
+            </a>
+            <div class="px-4 py-2 mt-3 mb-1 small text-uppercase fw-bold text-muted" style="letter-spacing: 1px; font-size: 0.7rem;">Conta e Segurança</div>
+            <a href="#" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-user-gear text-secondary" style="width: 20px;"></i>
+                <span class="fw-600">Meu Perfil</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3 position-relative">
+                <i class="fa-solid fa-bell text-secondary" style="width: 20px;"></i>
+                <span class="fw-600">Notificações</span>
+                <span class="badge rounded-pill bg-primary ms-auto">3</span>
+            </a>
+            <hr class="mx-4 my-2">
+            <a href="javascript:void(0)" onclick="logout()" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3 text-danger">
+                <i class="fa-solid fa-power-off" style="width: 20px;"></i>
+                <span class="fw-bold">Encerrar Sessão</span>
+            </a>
+        </div>
+        
+        <div class="mt-auto p-4">
+            <div class="card bg-light border-0 rounded-4 p-3">
+                <small class="text-muted d-block mb-1">Status do Servidor</small>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="status-dot" style="width: 10px; height: 10px; background: #2ecc71; border-radius: 50%;"></div>
+                    <span class="small fw-bold">Online</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="container pb-5">
         <div class="breadcrumb-custom d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-2">
                 <i class="fa-solid fa-house" style="color: var(--primary-purple);"></i>
                 <span class="text-muted">/</span>
-                <span class="fw-bold" style="color: var(--dark-purple);">Dashboard</span>
+                <span class="fw-bold" style="color: var(--dark-purple);">Portal</span>
                 <span class="text-muted">/</span>
                 <span class="text-muted">Alterar Produto</span>
             </div>
@@ -222,12 +308,12 @@
                             </button>
 
                             <div class="d-flex gap-2 mt-3">
-                                <a href="/index" class="btn btn-light border w-50" style="border-radius: 12px;">
+                                <a href="/inicio" class="btn btn-light border w-50" style="border-radius: 12px;">
                                     Cancelar
                                 </a>
-                                <a href="/deleta_samsung/{{$loja->id}}" class="btn btn-outline-danger w-50" style="border-radius: 12px;" onclick="return confirm('Excluir permanentemente?')">
+                                <button type="button" onclick="deletarAparelho({{$loja->id}})" class="btn btn-outline-danger w-50" style="border-radius: 12px;">
                                     <i class="fa-regular fa-trash-can me-1"></i> Deletar
-                                </a>
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -261,10 +347,12 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const API_URL = '/api';
+        const userToken = localStorage.getItem('user_token');
 
-        // Lógica de carregamento de produtos (Versão Roxa)
+        // Carregar produtos usando o token na URL
         async function carregarProdutos() {
             const tabela = document.getElementById('tabelaCorpo');
             const loader = document.getElementById('loader');
@@ -272,12 +360,14 @@
             loader.classList.remove('d-none');
 
             try {
-                const response = await fetch(`${API_URL}/todos_samsung`);
+                const response = await fetch(`${API_URL}/todos_samsung?token=${userToken}`);
+                if (response.status === 401) window.location.href = '/login';
+                
                 const data = await response.json();
 
                 if (data.samsung) {
                     data.samsung.forEach(item => {
-                        const isEditing = item.id == {{ $loja->id }};
+                        const isEditing = item.id == document.getElementById('id_loja').value;
                         tabela.innerHTML += `
                             <tr style="${isEditing ? 'background: var(--soft-purple); font-weight: bold;' : ''}">
                                 <td><span class="badge-id">#${item.id}</span></td>
@@ -296,15 +386,34 @@
             }
         }
 
+        function deletarAparelho(id) {
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Esta ação não pode ser desfeita!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, deletar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Aqui você chamaria sua API de delete passando o token
+                    window.location.href = `/deleta_samsung/${id}?token=${userToken}`;
+                }
+            })
+        }
+
         $(document).ready(function () {
-            window.onload = carregarProdutos;
+            carregarProdutos();
 
             $("#salvaraparelho").click(function () {
                 const btn = $(this);
                 btn.prop('disabled', true).html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i> PROCESSANDO...');
 
                 $.ajax({
-                    url: "../api/altera_loja",
+                    // Enviando o token via parâmetro na URL para o Middleware capturar
+                    url: `../api/altera_loja?token=${userToken}`,
                     method: "PUT",
                     data: {
                         cor: $("#cor").val(),
@@ -314,12 +423,18 @@
                         id_loja: $("#id_loja").val()
                     },
                     success: function (res) {
-                        alert("Alterado com sucesso!");
-                        window.location.href = '/index';
+                        Swal.fire('Sucesso!', 'Produto atualizado com sucesso.', 'success')
+                        .then(() => {
+                            window.location.href = '/inicio';
+                        });
                     },
                     error: function (xhr) {
-                        alert("Erro ao salvar.");
-                        btn.prop('disabled', false).html('<i class="fa-solid fa-check-double me-2"></i> ATUALIZAR REGISTRO');
+                        if(xhr.status === 401) {
+                            window.location.href = '/login';
+                        } else {
+                            Swal.fire('Erro', 'Falha ao atualizar registro.', 'error');
+                            btn.prop('disabled', false).html('<i class="fa-solid fa-check-double me-2"></i> ATUALIZAR REGISTRO');
+                        }
                     }
                 });
             });

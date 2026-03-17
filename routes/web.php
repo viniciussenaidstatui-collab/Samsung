@@ -25,6 +25,7 @@ Route::get('/login', function () {
     return view('login');
 });
 
+
 Route::get('/visualiza_loja/{id_loja}',[TestController::class,'visualiza_samsung']);
 Route::get('/altera_loja/{id_loja}',[TestController::class,'mostra_loja']);
 Route::get('/deleta_samsung/{id_loja}',[TestController::class,'deleta_samsung']);

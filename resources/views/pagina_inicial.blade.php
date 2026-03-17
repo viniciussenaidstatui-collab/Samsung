@@ -9,7 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     
+    <script>
+        if (!localStorage.getItem('user_token')) {
+            window.location.href = '/login';
+        }
+    </script>
+
     <style>
+        
         :root {
             --primary-purple: #6f42c1;
             --soft-purple: #f3f0ff;
@@ -166,57 +173,115 @@
             border-radius: 50%;
         }
 
-        /* Status Indicador */
-        .status-pill {
-            background: rgba(46, 204, 113, 0.15);
-            color: #1fb161;
-            padding: 5px 15px;
+        .badge-purple {
+            display: inline-block;
+            background: var(--soft-purple);
+            color: var(--primary-purple);
+            padding: 8px 20px;
             border-radius: 50px;
-            font-size: 0.75rem;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-size: 0.85rem;
         }
 
-        .dot-pulse {
-            width: 8px;
-            height: 8px;
-            background: #2ecc71;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
-        }
+        .cursor-pointer { cursor: pointer; }
+        .list-group-item-action:hover {
+        background-color: var(--soft-purple) !important;
+        color: var(--primary-purple) !important;
+    }
+    .fw-600 { font-weight: 600; }
+    .navbar-toggler:focus { box-shadow: none; }
+    .dropdown-item:active { background-color: var(--primary-purple); }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-custom">
+<nav class="navbar navbar-custom shadow-sm">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center w-100">
-            <a class="navbar-brand text-white d-flex align-items-center" href="#">
-                <i class="fa-solid fa-mobile-screen-button me-2"></i>
-                SAMSUNG <span class="fw-light ms-2 opacity-75">Admin</span>
-            </a>
-            
-            <div class="d-flex align-items-center gap-4">
-                    
-                <a href="/index" class="nav-link-custom">
-                    <i class="fa-solid fa-plus me-2"></i>Adicionar Aparelho
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler text-white border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <i class="fa-solid fa-bars-staggered fs-4"></i>
+                </button>
+                <a class="navbar-brand text-white d-flex align-items-center mb-0" href="#">
+                    <i class="fa-solid fa-mobile-screen-button me-2"></i>
+                    SAMSUNG <span class="fw-light ms-2 d-none d-sm-inline opacity-75">Admin</span>
                 </a>
-                <div class="d-flex gap-3 text-white fs-5">
-                    <i class="fa-regular fa-circle-user cursor-pointer"></i>
-                    <i class="fa-regular fa-bell cursor-pointer"></i>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative cursor-pointer text-white" title="Notificações">
+                    <i class="fa-regular fa-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.5rem;">
+                        3
+                    </span>
+                </div>
+                <div class="vr mx-2 opacity-25 text-white"></div>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=fff&color=6f42c1&bold=true" class="rounded-circle border border-2 border-white" width="35" alt="Avatar">
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 rounded-4">
+                        <li><h6 class="dropdown-header">Olá, Administrador</h6></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fa-regular fa-circle-user me-2"></i>Meu Perfil</a></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fa-regular fa-gear me-2"></i>Configurações</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sair</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </nav>
+
+<div class="offcanvas offcanvas-start border-0 shadow" tabindex="-1" id="sidebarMenu" style="width: 280px; background: var(--bg-page);">
+    <div class="offcanvas-header border-bottom py-4" style="background: var(--primary-purple);">
+        <h5 class="offcanvas-title text-white fw-bold" id="offcanvasLabel">
+            <i class="fa-solid fa-sliders me-2"></i>MENU GESTOR
+        </h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div class="list-group list-group-flush mt-3">
+            <a href="/inicio" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-house text-primary" style="width: 20px;"></i>
+                <span class="fw-600">Dashboard Geral</span>
+            </a>
+            <a href="/index" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-plus-circle text-success" style="width: 20px;"></i>
+                <span class="fw-600">Adicionar Aparelho</span>
+            </a>
+            <a href="/visualiza_loja" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-boxes-stacked text-warning" style="width: 20px;"></i>
+                <span class="fw-600">Controle de Estoque</span>
+            </a>
+            <div class="px-4 py-2 mt-3 mb-1 small text-uppercase fw-bold text-muted" style="letter-spacing: 1px; font-size: 0.7rem;">Conta e Segurança</div>
+            <a href="#" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-user-gear text-secondary" style="width: 20px;"></i>
+                <span class="fw-600">Meu Perfil</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3 position-relative">
+                <i class="fa-solid fa-bell text-secondary" style="width: 20px;"></i>
+                <span class="fw-600">Notificações</span>
+                <span class="badge rounded-pill bg-primary ms-auto">3</span>
+            </a>
+            <hr class="mx-4 my-2">
+            <a href="javascript:void(0)" onclick="logout()" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3 text-danger">
+                <i class="fa-solid fa-power-off" style="width: 20px;"></i>
+                <span class="fw-bold">Encerrar Sessão</span>
+            </a>
+        </div>
+        
+        <div class="mt-auto p-4">
+            <div class="card bg-light border-0 rounded-4 p-3">
+                <small class="text-muted d-block mb-1">Status do Servidor</small>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="status-dot" style="width: 10px; height: 10px; background: #2ecc71; border-radius: 50%;"></div>
+                    <span class="small fw-bold">Online</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="hero-section">
@@ -226,8 +291,11 @@
                 <h1 class="hero-title">Inovação na<br>sua mão.</h1>
                 <p class="hero-subtitle fs-5">Gerencie o ecossistema de produtos Samsung com uma interface intuitiva e poderosa.</p>
                 <div class="d-flex gap-3">
-                    <a href="#" class="btn btn-purple text-white">Explorar Dashboard</a>
-                    <a href="#" class="btn btn-outline-purple">Relatórios</a>
+                    <a href="/visualiza_loja" class="btn btn-purple text-white">Explorar Dashboard</a>
+                    <div class="badge bg-light text-dark p-3 rounded-4 border d-flex align-items-center">
+                         <span class="small fw-bold text-muted me-2">Token:</span> 
+                         <span id="tokenMini" class="small font-monospace text-truncate" style="max-width: 100px;">...</span>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6 text-center d-none d-lg-block">
@@ -281,7 +349,7 @@
                 <p class="opacity-75 fs-5">Adicione novos modelos à base de dados global e sincronize com as lojas em segundos.</p>
             </div>
             <div class="col-lg-4 text-lg-end">
-                <a href="/altera_loja" class="btn btn-light btn-lg px-5 py-3 rounded-4 fw-bold text-purple" style="color: var(--primary-purple);">Começar Agora</a>
+                <a href="/index" class="btn btn-light btn-lg px-5 py-3 rounded-4 fw-bold text-purple" style="color: var(--primary-purple);">Começar Agora</a>
             </div>
         </div>
     </div>
@@ -290,10 +358,10 @@
         <h3 class="fw-bold mb-5">Ações do Sistema</h3>
         <div class="row g-3 justify-content-center">
             <div class="col-6 col-md-auto">
-                <a href="/index" class="btn btn-outline-purple px-4 py-3 w-100"><i class="fa-solid fa-house me-2"></i>Início</a>
+                <a href="/inicio" class="btn btn-outline-purple px-4 py-3 w-100"><i class="fa-solid fa-house me-2"></i>Início</a>
             </div>
             <div class="col-6 col-md-auto">
-                <a href="/visualiza_loja" class="btn btn-outline-purple px-4 py-3 w-100"><i class="fa-solid fa-list-check me-2"></i>Estoque</a>
+                <a href="/visualiza_loja" id="linkEstoque" class="btn btn-outline-purple px-4 py-3 w-100"><i class="fa-solid fa-list-check me-2"></i>Estoque</a>
             </div>
             <div class="col-6 col-md-auto">
                 <a href="/deleta_samsung" class="btn btn-outline-danger px-4 py-3 w-100"><i class="fa-solid fa-trash-can me-2"></i>Limpar Base</a>
@@ -317,5 +385,44 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const token = localStorage.getItem('user_token');
+
+    // Exibe uma prévia do token no dashboard (opcional)
+    if(token) {
+        document.getElementById('tokenMini').innerText = token;
+    }
+
+    // Função para Sair
+    function logout() {
+        Swal.fire({
+            title: 'Deseja sair?',
+            text: "Sua sessão será encerrada.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#6f42c1',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, sair!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem('user_token');
+                window.location.href = '/login';
+            }
+        })
+    }
+
+    // Validação em tempo real (Verifica se o token ainda é válido no servidor)
+    fetch(`/api/todos_samsung?token=${token}`)
+        .then(response => {
+            if (response.status === 401) {
+                localStorage.removeItem('user_token');
+                window.location.href = '/login';
+            }
+        })
+        .catch(err => console.log("Erro de conexão com API"));
+</script>
 </body>
 </html>

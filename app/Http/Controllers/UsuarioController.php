@@ -22,6 +22,7 @@ class UsuarioController extends Controller
         'senha' => 'required'
 
     ]);
+    
 
         try {
             $usuario = new Usuario;

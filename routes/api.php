@@ -25,4 +25,5 @@ Route::put('/altera_loja', [TestController::Class, 'altera_loja']);
 Route::delete('/d_samsung', [TestController::class, 'deletar_samsung']);
 
 
+
 });

@@ -190,6 +190,8 @@ $('#formCadastro').on('submit', function(e){
 
         success: function(data){
 
+        console.log(data);
+
             if(data.erro === 'n'){
 
                 Swal.fire({
@@ -199,7 +201,7 @@ $('#formCadastro').on('submit', function(e){
                     confirmButtonColor: '#6f42c1'
                 }).then(function(){
 
-                    window.location.href = '/inicio';
+                  //  window.location.href = '/inicio';
 
                 });
 

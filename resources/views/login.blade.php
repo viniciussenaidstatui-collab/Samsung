@@ -7,12 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
     <style>
         :root {
-            --primary-purple: #6f42c1;
-            --dark-purple: #2d1b4e;
+            --primary-blue: #007aff;
+            --dark-blue: #003a7a;
             --bg-gradient: linear-gradient(135deg, #007aff 0%, #003a7a 100%);
         }
 
@@ -39,7 +38,7 @@
         .brand-logo {
             font-weight: 800;
             font-size: 1.6rem;
-            color: var(--dark-purple);
+            color: #1d1d1f;
             text-align: center;
             margin-bottom: 40px;
             letter-spacing: 1px;
@@ -53,7 +52,7 @@
         }
 
         .btn-auth {
-            background: var(--primary-purple);
+            background: var(--primary-blue);
             color: white;
             border-radius: 12px;
             padding: 14px;
@@ -64,7 +63,7 @@
         }
 
         .btn-auth:hover {
-            background: var(--dark-purple);
+            background: var(--dark-blue);
             transform: translateY(-2px);
         }
     </style>
@@ -90,42 +89,53 @@
             <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
         </div>
 
-        <button type="submit" class="btn btn-auth">
+        <button type="submit" class="btn btn-auth" id="btnSubmit">
             <i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Portal
         </button>
 
         <div class="text-center mt-4">
-            <p class="small">Não tem conta? <a href="/cadastro" class="text-decoration-none fw-bold" style="color: var(--primary-purple);">Cadastre-se</a></p>
+            <p class="small">Não tem conta? <a href="/cadastro" class="text-decoration-none fw-bold" style="color: var(--primary-blue);">Cadastre-se</a></p>
         </div>
     </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    // Se o usuário já tiver um token válido, manda direto para o início
+    if (localStorage.getItem('user_token')) {
+        window.location.href = '/inicio';
+    }
+
     document.getElementById('formLogin').addEventListener('submit', function(e) {
         e.preventDefault();
+
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true; // Evita múltiplos cliques
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Carregando...';
 
         const email = document.getElementById('email').value;
         const senha = document.getElementById('senha').value;
 
-        // Note: sua rota na api.php está como GET. 
-        // Para passar parâmetros no GET via fetch, usamos a Query String:
+        // Chamada para a sua API
+        // IMPORTANTE: Mudei para POST por segurança. Ajuste sua rota se necessário.
         fetch(`/api/login_usuario?email=${email}&senha=${senha}`, {
-            method: 'GET',
+            method: 'GET', // Mantido GET conforme sua api.php atual
             headers: {
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
         })
         .then(response => response.json())
         .then(data => {
-            if(data.erro === 'n' && data.msg === 'Usuario Logado') {
-                // SALVAR O TOKEN: Muito importante para manter o usuário logado
+            if(data.erro === 'n' && data.token) {
+                // SALVA O TOKEN NO NAVEGADOR
                 localStorage.setItem('user_token', data.token);
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Login realizado!',
-                    text: 'Redirecionando para o painel...',
+                    title: 'Bem-vindo!',
+                    text: 'Login realizado com sucesso.',
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
@@ -134,14 +144,18 @@
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Falha no Login',
-                    text: data.msg || 'Credenciais incorretas.'
+                    title: 'Ops!',
+                    text: data.msg || 'E-mail ou senha incorretos.'
                 });
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Portal';
             }
         })
         .catch(error => {
             console.error('Erro:', error);
-            Swal.fire({ icon: 'error', title: 'Erro de conexão' });
+            Swal.fire({ icon: 'error', title: 'Erro de servidor', text: 'Tente novamente mais tarde.' });
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Portal';
         });
     });
 </script>

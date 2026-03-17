@@ -10,6 +10,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     
     <style>
+        .list-group-item-action:hover {
+        background-color: var(--soft-purple) !important;
+        color: var(--primary-purple) !important;
+    }
+    .fw-600 { font-weight: 600; }
+    .navbar-toggler:focus { box-shadow: none; }
+    .dropdown-item:active { background-color: var(--primary-purple); }
         :root {
             --primary-purple: #6f42c1;
             --soft-purple: #f3f0ff;
@@ -247,29 +254,93 @@
 </head>
 <body>
 
-<nav class="navbar navbar-custom mb-5 shadow">
-    <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand text-white fw-bold italic" href="#">
-            <i class="fa-solid fa-mobile-screen-button me-2"></i> SAMSUNG/STORE
-        </a>
-        <div class="d-flex align-items-center gap-4">
-            <span class="text-white-50 small">
-                <span class="status-dot"></span> Sistema Ativo
-            </span>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-link text-white text-decoration-none dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fa-regular fa-circle-user me-1"></i> Admin
+<nav class="navbar navbar-custom shadow-sm">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler text-white border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <i class="fa-solid fa-bars-staggered fs-4"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#"><i class="fa-regular fa-user me-2"></i> Perfil</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fa-regular fa-gear me-2"></i> Configurações</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="#"><i class="fa-regular fa-arrow-right-from-bracket me-2"></i> Sair</a></li>
-                </ul>
+                <a class="navbar-brand text-white d-flex align-items-center mb-0" href="#">
+                    <i class="fa-solid fa-mobile-screen-button me-2"></i>
+                    SAMSUNG <span class="fw-light ms-2 d-none d-sm-inline opacity-75">Admin</span>
+                </a>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative cursor-pointer text-white" title="Notificações">
+                    <i class="fa-regular fa-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.5rem;">
+                        3
+                    </span>
+                </div>
+                <div class="vr mx-2 opacity-25 text-white"></div>
+                <div class="dropdown">
+                    <div class="d-flex align-items-center gap-2 cursor-pointer" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=fff&color=6f42c1&bold=true" class="rounded-circle border border-2 border-white" width="35" alt="Avatar">
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 rounded-4">
+                        <li><h6 class="dropdown-header">Olá, Administrador</h6></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fa-regular fa-circle-user me-2"></i>Meu Perfil</a></li>
+                        <li><a class="dropdown-item py-2" href="#"><i class="fa-regular fa-gear me-2"></i>Configurações</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="javascript:void(0)" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sair</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </nav>
+
+<div class="offcanvas offcanvas-start border-0 shadow" tabindex="-1" id="sidebarMenu" style="width: 280px; background: var(--bg-page);">
+    <div class="offcanvas-header border-bottom py-4" style="background: var(--primary-purple);">
+        <h5 class="offcanvas-title text-white fw-bold" id="offcanvasLabel">
+            <i class="fa-solid fa-sliders me-2"></i>MENU GESTOR
+        </h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <div class="list-group list-group-flush mt-3">
+            <a href="/inicio" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-house text-primary" style="width: 20px;"></i>
+                <span class="fw-600">Dashboard Geral</span>
+            </a>
+            <a href="/index" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-plus-circle text-success" style="width: 20px;"></i>
+                <span class="fw-600">Adicionar Aparelho</span>
+            </a>
+            <a href="/visualiza_loja" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-boxes-stacked text-warning" style="width: 20px;"></i>
+                <span class="fw-600">Controle de Estoque</span>
+            </a>
+            <div class="px-4 py-2 mt-3 mb-1 small text-uppercase fw-bold text-muted" style="letter-spacing: 1px; font-size: 0.7rem;">Conta e Segurança</div>
+            <a href="#" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3">
+                <i class="fa-solid fa-user-gear text-secondary" style="width: 20px;"></i>
+                <span class="fw-600">Meu Perfil</span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3 position-relative">
+                <i class="fa-solid fa-bell text-secondary" style="width: 20px;"></i>
+                <span class="fw-600">Notificações</span>
+                <span class="badge rounded-pill bg-primary ms-auto">3</span>
+            </a>
+            <hr class="mx-4 my-2">
+            <a href="javascript:void(0)" onclick="logout()" class="list-group-item list-group-item-action border-0 px-4 py-3 d-flex align-items-center gap-3 text-danger">
+                <i class="fa-solid fa-power-off" style="width: 20px;"></i>
+                <span class="fw-bold">Encerrar Sessão</span>
+            </a>
+        </div>
+        
+        <div class="mt-auto p-4">
+            <div class="card bg-light border-0 rounded-4 p-3">
+                <small class="text-muted d-block mb-1">Status do Servidor</small>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="status-dot" style="width: 10px; height: 10px; background: #2ecc71; border-radius: 50%;"></div>
+                    <span class="small fw-bold">Online</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container pb-5">
     <!-- Breadcrumb e Data -->
