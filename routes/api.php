@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Middleware\auth_api;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
@@ -13,6 +15,14 @@ Route::get('/soma', [TestController::class,'soma']);
 Route::post('/salva_samsung', [TestController::class,'salva_samsung']);
 Route::get('/exibe_samsung/{id}',[TestController::Class,'exibe_samsung']);
 Route::get('/todos_samsung',[TestController::Class,'todos_samsung']);
+Route::post('/cadastro_usuario',[UsuarioController::class,'cadastro_usuario']);
+Route::get('/login_usuario',[UsuarioController::class,'login_usuario']);
+
+Route::middleware(auth_api::class)->group(function() {
+//Colocar pagina que funcionam apenas, após colocar o token
+Route::post('/salva_samsung', [TestController::class,'salva_samsung']);
 Route::put('/altera_loja', [TestController::Class, 'altera_loja']);
 Route::delete('/d_samsung', [TestController::class, 'deletar_samsung']);
 
+
+});
