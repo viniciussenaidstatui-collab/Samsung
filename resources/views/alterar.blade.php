@@ -403,7 +403,7 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Erro',
-                                text: 'Erro ao conectar com o servidor.'
+                                text: 'Voce não tem permissão'
                             });
                         }
                         

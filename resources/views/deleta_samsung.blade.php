@@ -466,75 +466,120 @@
 
         $("#salvaraparelho").click(function () {
             if(!$('#confirmDelete').is(':checked')) {
-                alert('Por favor, confirme que deseja deletar o produto.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Confirmação necessária',
+                    text: 'Por favor, confirme que deseja deletar o produto.',
+                    confirmButtonColor: '#6f42c1'
+                });
                 return;
             }
 
-            if(confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita!')) {
-                
-                // PEGAR O TOKEN DO COOKIE NOVAMENTE
-                let tokenAtual = $.cookie('token');
-                
-                if (!tokenAtual) {
-                    alert("Sessão expirada! Faça login novamente.");
-                    window.location.href = '/login';
-                    return;
-                }
-
-                $.ajax({
-                    url: "/api/d_samsung",
-                    method: "DELETE",
-                    data: {
-                        id_loja: $("#id_loja").val(),
-                        token: tokenAtual
-                    },
-                    beforeSend: function() {
-                        $('#salvaraparelho').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> DELETANDO...');
-                    },
-                    success: function (res) {
-                        console.log(res);
-                        if(res['erro'] == 'n') {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Sucesso!',
-                                text: 'Produto deletado com sucesso!',
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then(() => {
-                                window.location.href = '/index';
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro',
-                                text: res['msg'] || 'Erro desconhecido'
-                            });
-                            $('#salvaraparelho').prop('disabled', false).html('<i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM');
-                        }
-                    },
-                    error: function (xhr) {
-                        console.log("Erro", xhr.responseText);
-                        
-                        if(xhr.status === 401 || xhr.status === 419) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Sessão expirada',
-                                text: 'Faça login novamente.'
-                            }).then(() => {
-                                window.location.href = '/login';
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro',
-                                text: 'Erro ao deletar produto. Tente novamente.'
-                            });
-                        }
-                        
-                        $('#salvaraparelho').prop('disabled', false).html('<i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM');
+            // Usar SweetAlert para confirmação
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Esta ação não pode ser desfeita!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sim, deletar!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    // PEGAR O TOKEN DO COOKIE NOVAMENTE
+                    let tokenAtual = $.cookie('token');
+                    
+                    if (!tokenAtual) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Sessão expirada',
+                            text: 'Faça login novamente.',
+                            confirmButtonColor: '#6f42c1'
+                        }).then(() => {
+                            window.location.href = '/login';
+                        });
+                        return;
                     }
-                });
-            }
+
+                    $.ajax({
+                        url: "/api/d_samsung",
+                        method: "DELETE",
+                        data: {
+                            id_loja: $("#id_loja").val(),
+                            token: tokenAtual
+                        },
+                        beforeSend: function() {
+                            Swal.fire({
+                                title: 'Deletando...',
+                                text: 'Por favor, aguarde.',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+                        },
+                        success: function (res) {
+                            console.log(res);
+                            if(res['erro'] == 'n') {
+                                // ✅ SUCESSO - Mostrar mensagem de sucesso e redirecionar
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Sucesso!',
+                                    text: 'Produto deletado com sucesso!',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.href = '/index'; // Redireciona para página de criar
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erro',
+                                    text: res['msg'] || 'Item Apagado com Sucesso'
+                                });
+                            }
+                        },
+                        error: function (xhr) {
+                            console.log("Erro", xhr.responseText);
+                            
+                            // Tentar parsear a resposta
+                            try {
+                                let response = JSON.parse(xhr.responseText);
+                                
+                                if (xhr.status === 403) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Permissão Negada',
+                                        text: response.msg || 'Você não tem permissão para deletar este produto.'
+                                    });
+                                } else if (xhr.status === 401 || xhr.status === 419) {
+                                    Swal.fire({
+                                        icon: 'warning',
+                                        title: 'Sessão expirada',
+                                        text: 'Faça login novamente.'
+                                    }).then(() => {
+                                        window.location.href = '/login';
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Erro',
+                                        text: response.msg || 'Erro ao deletar produto.'
+                                    });
+                                }
+                            } catch(e) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erro',
+                                    text: 'Erro ao conectar com o servidor.'
+                                });
+                            }
+                        }
+                    });
+                }
+            });
         });
     });
 </script>

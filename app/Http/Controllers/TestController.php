@@ -17,11 +17,21 @@ class TestController extends Controller
         ]);
 
         try {
+
+          $usuario = $request->usuario;
+
+           if (!$usuario) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'Usuário não identificado'
+            ], 401);
+        }
             $samsung = new SamsungModel();
             $samsung->cor = $request->cor;
             $samsung->ano = $request->ano;
             $samsung->modelo = $request->modelo;
             $samsung->aparelho = $request->aparelho;
+             $samsung->user_id = $usuario->id;
             $samsung->save();
 
             $data = [
@@ -80,12 +90,32 @@ class TestController extends Controller
         ]);
 
         try {
-            $samsung = SamsungModel::find($request->id_loja);
-            $samsung->cor = $request->cor;
-            $samsung->ano = $request->ano;
-            $samsung->modelo = $request->modelo;
-            $samsung->aparelho = $request->aparelho;
-            $samsung->save();
+        $usuario = $request->usuario; // USUÁRIO LOGADO
+        
+        // BUSCAR O PRODUTO
+        $samsung = SamsungModel::find($request->id_loja);
+        
+        if (!$samsung) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'Produto não encontrado'
+            ], 404);
+        }
+        
+        // VERIFICAR SE O USUÁRIO É O DONO
+        if ($samsung->user_id != $usuario->id) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'Você não tem permissão para alterar este produto'
+            ], 403); // 403 = Forbidden
+        }
+        
+        // SE PASSOU NA VERIFICAÇÃO, ALTERA
+        $samsung->cor = $request->cor;
+        $samsung->ano = $request->ano;
+        $samsung->modelo = $request->modelo;
+        $samsung->aparelho = $request->aparelho;
+        $samsung->save();
 
             $data = [
                 'erro' => 'n',
@@ -113,16 +143,34 @@ class TestController extends Controller
         ]);
 
         try {
-            $samsung = SamsungModel::find($request->id_loja);
-            $samsung->delete();
+        $usuario = $request->usuario; // USUÁRIO LOGADO
+        
+        // BUSCAR O PRODUTO
+        $samsung = SamsungModel::find($request->id_loja);
+        
+        if (!$samsung) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'Produto não encontrado'
+            ], 404);
+        }
+        
+        // VERIFICAR SE O USUÁRIO É O DONO
+        if ($samsung->user_id != $usuario->id) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'Você não tem permissão para deletar este produto'
+            ], 403); // 403 = Forbidden
+        }
+        
+        // SE PASSOU NA VERIFICAÇÃO, DELETA
+        $samsung->delete();
 
-            $data = [
-                'erro' => 'n',
-                'msg' => 'Registro deletado com sucesso',
-                'samsung' => $samsung
-            ];
-
-            return response()->json($data, 200);
+        $data = [
+            'erro' => 'n',
+            'msg' => 'Produto deletado com sucesso',
+            'samsung' => $samsung
+        ];
 
         } catch(\Throwable $th) {
             throw $th;

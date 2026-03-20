@@ -13,6 +13,13 @@ class SamsungModel extends Model
         'ano',
         'modelo',
         'aparelho',
+           'user_id' // ADICIONE ISSO
     ];
 
+    // Relacionamento com Usuário
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'user_id');
+    }
 }
+
