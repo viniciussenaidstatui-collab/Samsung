@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -302,17 +303,56 @@
         }
 
         $(document).ready(function () {
+            // ===== VERIFICAÇÃO DE TOKEN AO CARREGAR A PÁGINA =====
+            let token = $.cookie('token');
+            
+            console.log("=== VERIFICANDO ACESSO À PÁGINA DE ALTERAR ===");
+            console.log("Token encontrado:", token ? "✅ SIM" : "❌ NÃO");
+            
+            if (!token) {
+                console.log("❌ USUÁRIO NÃO LOGADO! Bloqueando acesso...");
+                
+                // Desabilitar o botão
+                $('#salvaraparelho').prop('disabled', true);
+                
+                // Mostrar alerta bonito
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Acesso Negado',
+                    text: 'Você precisa estar logado para acessar esta página!',
+                    confirmButtonColor: '#6f42c1',
+                    confirmButtonText: 'Ir para Login',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/login';
+                    }
+                });
+                
+                return; // IMPEDE O RESTO DO CÓDIGO DE EXECUTAR
+            }
+            
+            console.log("✅ ACESSO PERMITIDO! Token válido:", token.substring(0, 15) + "...");
+            
+            // Carregar produtos
             carregarProdutos();
 
             $("#salvaraparelho").click(function () {
                 const btn = $(this);
                 btn.prop('disabled', true).html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i> PROCESSANDO...');
 
-                let token = $.cookie('token');
+                // PEGAR O TOKEN NOVAMENTE
+                let tokenAtual = $.cookie('token');
                 
-                if (!token) {
-                    alert("Token não encontrado! Faça login novamente.");
-                    window.location.href = '/login';
+                if (!tokenAtual) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Sessão expirada',
+                        text: 'Faça login novamente.',
+                        confirmButtonColor: '#6f42c1'
+                    }).then(() => {
+                        window.location.href = '/login';
+                    });
                     return;
                 }
 
@@ -325,21 +365,48 @@
                         modelo: $("#modelo").val(),
                         aparelho: $("#aparelho").val(),
                         id_loja: $("#id_loja").val(),
-                        token: token
+                        token: tokenAtual
                     },
                     success: function (res) {
                         console.log(res);
                         if(res['erro'] == 'n') {
-                            alert("Produto alterado com sucesso!");
-                            window.location.href = '/index';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: 'Produto alterado com sucesso!',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = '/index';
+                            });
                         } else {
-                            alert("Erro: " + (res['msg'] || 'Erro desconhecido'));
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro',
+                                text: res['msg'] || 'Erro desconhecido'
+                            });
                             btn.prop('disabled', false).html('<i class="fa-solid fa-check-double me-2"></i> ATUALIZAR REGISTRO');
                         }
                     },
                     error: function (xhr) {
                         console.log("Erro:", xhr.responseText);
-                        alert("Erro ao conectar com o servidor.");
+                        
+                        if(xhr.status === 401 || xhr.status === 419) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Sessão expirada',
+                                text: 'Faça login novamente.'
+                            }).then(() => {
+                                window.location.href = '/login';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro',
+                                text: 'Erro ao conectar com o servidor.'
+                            });
+                        }
+                        
                         btn.prop('disabled', false).html('<i class="fa-solid fa-check-double me-2"></i> ATUALIZAR REGISTRO');
                     }
                 });

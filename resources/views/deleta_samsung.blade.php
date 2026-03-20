@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -23,14 +24,12 @@
             color: #444;
         }
 
-        /* Navbar Estilizada */
         .navbar-custom { 
             background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
             padding: 1.5rem 0;
             border-bottom: 4px solid rgba(255,255,255,0.1);
         }
 
-        /* Cards com efeito de flutuação */
         .card { 
             border: none; 
             border-radius: 20px; 
@@ -52,7 +51,6 @@
             gap: 10px;
         }
 
-        /* Inputs e Botões */
         .form-control {
             border-radius: 10px;
             border: 1px solid #e1e1e1;
@@ -92,10 +90,6 @@
             background-color: #bb2d3b;
         }
 
-        /* Tabela */
-        .table {
-            margin-bottom: 0;
-        }
         .table thead th {
             background-color: var(--soft-purple);
             color: var(--dark-purple);
@@ -118,7 +112,6 @@
             font-weight: 600;
         }
 
-        /* Status Dot */
         .status-dot {
             height: 10px;
             width: 10px;
@@ -130,27 +123,11 @@
         }
 
         @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
 
-        /* Links */
-        a {
-            color: var(--primary-purple);
-            transition: all 0.3s;
-        }
-        a:hover {
-            color: var(--dark-purple);
-        }
-
-        /* Badges adicionais */
         .badge-purple {
             background-color: var(--soft-purple);
             color: var(--primary-purple);
@@ -160,7 +137,6 @@
             font-weight: 600;
         }
 
-        /* Alertas */
         .alert-custom {
             background-color: var(--soft-purple);
             border-left: 4px solid var(--primary-purple);
@@ -169,7 +145,6 @@
             margin-bottom: 20px;
         }
 
-        /* Informações do produto */
         .product-info {
             background-color: white;
             border-radius: 10px;
@@ -201,7 +176,6 @@
         }
     @endphp
 
-    <!-- Agora usando $samsung em vez de $loja -->
     <input type="hidden" id="id_loja" value="{{ $samsung->id }}">
 
 <nav class="navbar navbar-custom mb-5 shadow">
@@ -399,7 +373,6 @@
                 document.getElementById('itemsCount').textContent = data.samsung.length;
                 
                 data.samsung.forEach(item => {
-                    // Destacar o item que está sendo deletado - Agora usando $samsung
                     const isCurrentItem = item.id == {{ $samsung->id }};
                     const rowStyle = isCurrentItem ? 'style="background-color: rgba(220, 53, 69, 0.05); border-left: 3px solid #dc3545;"' : '';
                     
@@ -434,7 +407,6 @@
         }
     }
 
-    // Função para retornar cor baseada no nome da cor
     function getCorColor(cor) {
         const cores = {
             'Titanium': '#808080',
@@ -449,12 +421,44 @@
         };
         return cores[cor] || '#6f42c1';
     }
-
-    window.onload = carregarProdutos;
 </script>
 
 <script>
     $(document).ready(function () {
+        // ===== VERIFICAÇÃO DE TOKEN AO CARREGAR A PÁGINA =====
+        let token = $.cookie('token');
+        
+        console.log("=== VERIFICANDO ACESSO À PÁGINA DE DELETAR ===");
+        console.log("Token encontrado:", token ? "✅ SIM" : "❌ NÃO");
+        
+        if (!token) {
+            console.log("❌ USUÁRIO NÃO LOGADO! Bloqueando acesso...");
+            
+            // Desabilitar tudo
+            $('#confirmDelete, #salvaraparelho').prop('disabled', true);
+            
+            // Mostrar alerta bonito
+            Swal.fire({
+                icon: 'warning',
+                title: 'Acesso Negado',
+                text: 'Você precisa estar logado para acessar esta página!',
+                confirmButtonColor: '#6f42c1',
+                confirmButtonText: 'Ir para Login',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/login';
+                }
+            });
+            
+            return; // IMPEDE O RESTO DO CÓDIGO DE EXECUTAR
+        }
+        
+        console.log("✅ ACESSO PERMITIDO! Token válido:", token.substring(0, 15) + "...");
+        
+        // Carregar produtos
+        carregarProdutos();
+        
         // Controle do checkbox de confirmação
         $('#confirmDelete').change(function() {
             $('#salvaraparelho').prop('disabled', !this.checked);
@@ -468,11 +472,11 @@
 
             if(confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita!')) {
                 
-                // PEGAR O TOKEN DO COOKIE
-                let token = $.cookie('token');
+                // PEGAR O TOKEN DO COOKIE NOVAMENTE
+                let tokenAtual = $.cookie('token');
                 
-                if (!token) {
-                    alert("Token não encontrado! Faça login novamente.");
+                if (!tokenAtual) {
+                    alert("Sessão expirada! Faça login novamente.");
                     window.location.href = '/login';
                     return;
                 }
@@ -481,8 +485,8 @@
                     url: "/api/d_samsung",
                     method: "DELETE",
                     data: {
-                        id_loja: $("#id_loja").val(),  // Só precisa do ID para deletar
-                        token: token  // TOKEN OBRIGATÓRIO
+                        id_loja: $("#id_loja").val(),
+                        token: tokenAtual
                     },
                     beforeSend: function() {
                         $('#salvaraparelho').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> DELETANDO...');
@@ -490,22 +494,41 @@
                     success: function (res) {
                         console.log(res);
                         if(res['erro'] == 'n') {
-                            alert('Produto deletado com sucesso!');
-                            window.location.href = '/index';
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: 'Produto deletado com sucesso!',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = '/index';
+                            });
                         } else {
-                            alert('Erro: ' + (res['msg'] || 'Erro desconhecido'));
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro',
+                                text: res['msg'] || 'Erro desconhecido'
+                            });
                             $('#salvaraparelho').prop('disabled', false).html('<i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM');
                         }
                     },
                     error: function (xhr) {
                         console.log("Erro", xhr.responseText);
                         
-                        if(xhr.status === 405) {
-                            alert("Erro: Método não permitido. Verifique se a rota aceita DELETE.");
-                        } else if(xhr.status === 500) {
-                            alert("Erro interno no servidor. Verifique os logs.");
+                        if(xhr.status === 401 || xhr.status === 419) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Sessão expirada',
+                                text: 'Faça login novamente.'
+                            }).then(() => {
+                                window.location.href = '/login';
+                            });
                         } else {
-                            alert('Erro ao deletar produto. Tente novamente.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro',
+                                text: 'Erro ao deletar produto. Tente novamente.'
+                            });
                         }
                         
                         $('#salvaraparelho').prop('disabled', false).html('<i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM');
