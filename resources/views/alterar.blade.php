@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     
     <style>
         :root {
@@ -23,7 +24,6 @@
             min-height: 100vh;
         }
 
-        /* Navbar */
         .navbar-custom { 
             background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
             padding: 1.5rem 0;
@@ -31,7 +31,6 @@
             box-shadow: 0 4px 20px rgba(111, 66, 193, 0.2);
         }
 
-        /* Cards */
         .card { 
             border: none; 
             border-radius: 20px; 
@@ -53,7 +52,6 @@
             gap: 10px;
         }
 
-        /* Inputs e Botões */
         .form-control {
             border-radius: 10px;
             border: 1px solid #e1e1e1;
@@ -88,7 +86,6 @@
             box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
         }
 
-        /* Tabela */
         .table thead th {
             background-color: var(--soft-purple);
             color: var(--dark-purple);
@@ -129,7 +126,6 @@
             box-shadow: 0 2px 10px rgba(111, 66, 193, 0.05);
         }
 
-        /* Destaque do Produto Atual */
         .current-product-box {
             background: white;
             border-left: 5px solid var(--primary-purple);
@@ -143,7 +139,16 @@
     </style>
 </head>
 <body>
-    <input type="hidden" id="id_loja" value="{{$loja->id}}">
+    @php
+        // Verificação de segurança - Agora usando $samsung
+        if(!isset($samsung) || !$samsung) {
+            echo '<div class="alert alert-danger m-5">Produto não encontrado! <a href="/index">Voltar</a></div>';
+            exit;
+        }
+    @endphp
+
+    <!-- Agora usando $samsung em vez de $loja -->
+    <input type="hidden" id="id_loja" value="{{ $samsung->id }}">
 
     <nav class="navbar navbar-custom mb-5 shadow">
         <div class="container d-flex justify-content-between align-items-center">
@@ -182,10 +187,10 @@
                 </div>
                 <div>
                     <p class="text-muted small mb-0">Editando agora:</p>
-                    <h5 class="fw-bold mb-0" style="color: var(--dark-purple);">{{$loja->aparelho}} {{$loja->modelo}}</h5>
+                    <h5 class="fw-bold mb-0" style="color: var(--dark-purple);">{{ $samsung->aparelho }} {{ $samsung->modelo }}</h5>
                 </div>
             </div>
-            <span class="badge-id">ID #{{$loja->id}}</span>
+            <span class="badge-id">ID #{{ $samsung->id }}</span>
         </div>
 
         <div class="row g-4">
@@ -198,22 +203,22 @@
                         <form id="formSamsung">
                             <div class="mb-3">
                                 <label class="form-label"><i class="fa-solid fa-mobile-alt me-1"></i> Aparelho</label>
-                                <input value="{{ $loja->aparelho }}" type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24">
+                                <input value="{{ $samsung->aparelho }}" type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24">
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label"><i class="fa-solid fa-microchip me-1"></i> Modelo</label>
-                                <input value="{{ $loja->modelo }}" type="text" id="modelo" class="form-control" placeholder="Ex: Ultra">
+                                <input value="{{ $samsung->modelo }}" type="text" id="modelo" class="form-control" placeholder="Ex: Ultra">
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><i class="fa-solid fa-palette me-1"></i> Cor</label>
-                                    <input value="{{ $loja->cor }}" type="text" id="cor" class="form-control" placeholder="Ex: Titanium">
+                                    <input value="{{ $samsung->cor }}" type="text" id="cor" class="form-control" placeholder="Ex: Titanium">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label"><i class="fa-solid fa-calendar-day me-1"></i> Ano</label>
-                                    <input value="{{ $loja->ano }}" type="number" id="ano" class="form-control" placeholder="2024">
+                                    <input value="{{ $samsung->ano }}" type="number" id="ano" class="form-control" placeholder="2024">
                                 </div>
                             </div>
 
@@ -225,7 +230,7 @@
                                 <a href="/index" class="btn btn-light border w-50" style="border-radius: 12px;">
                                     Cancelar
                                 </a>
-                                <a href="/deleta_samsung/{{$loja->id}}" class="btn btn-outline-danger w-50" style="border-radius: 12px;" onclick="return confirm('Excluir permanentemente?')">
+                                <a href="/deleta_samsung/{{$samsung->id}}" class="btn btn-outline-danger w-50" style="border-radius: 12px;" onclick="return confirm('Excluir permanentemente?')">
                                     <i class="fa-regular fa-trash-can me-1"></i> Deletar
                                 </a>
                             </div>
@@ -250,7 +255,8 @@
                                 </tr>
                             </thead>
                             <tbody id="tabelaCorpo">
-                                </tbody>
+                                <!-- Dados serão inseridos via JavaScript -->
+                            </tbody>
                         </table>
                     </div>
                     <div id="loader" class="text-center py-4 d-none">
@@ -264,7 +270,6 @@
     <script>
         const API_URL = '/api';
 
-        // Lógica de carregamento de produtos (Versão Roxa)
         async function carregarProdutos() {
             const tabela = document.getElementById('tabelaCorpo');
             const loader = document.getElementById('loader');
@@ -277,7 +282,7 @@
 
                 if (data.samsung) {
                     data.samsung.forEach(item => {
-                        const isEditing = item.id == {{ $loja->id }};
+                        const isEditing = item.id == {{ $samsung->id }};
                         tabela.innerHTML += `
                             <tr style="${isEditing ? 'background: var(--soft-purple); font-weight: bold;' : ''}">
                                 <td><span class="badge-id">#${item.id}</span></td>
@@ -297,28 +302,44 @@
         }
 
         $(document).ready(function () {
-            window.onload = carregarProdutos;
+            carregarProdutos();
 
             $("#salvaraparelho").click(function () {
                 const btn = $(this);
                 btn.prop('disabled', true).html('<i class="fa-solid fa-circle-notch fa-spin me-2"></i> PROCESSANDO...');
 
+                let token = $.cookie('token');
+                
+                if (!token) {
+                    alert("Token não encontrado! Faça login novamente.");
+                    window.location.href = '/login';
+                    return;
+                }
+
                 $.ajax({
-                    url: "../api/altera_loja",
+                    url: "/api/altera_loja",
                     method: "PUT",
                     data: {
                         cor: $("#cor").val(),
                         ano: $("#ano").val(),
                         modelo: $("#modelo").val(),
                         aparelho: $("#aparelho").val(),
-                        id_loja: $("#id_loja").val()
+                        id_loja: $("#id_loja").val(),
+                        token: token
                     },
                     success: function (res) {
-                        alert("Alterado com sucesso!");
-                        window.location.href = '/index';
+                        console.log(res);
+                        if(res['erro'] == 'n') {
+                            alert("Produto alterado com sucesso!");
+                            window.location.href = '/index';
+                        } else {
+                            alert("Erro: " + (res['msg'] || 'Erro desconhecido'));
+                            btn.prop('disabled', false).html('<i class="fa-solid fa-check-double me-2"></i> ATUALIZAR REGISTRO');
+                        }
                     },
                     error: function (xhr) {
-                        alert("Erro ao salvar.");
+                        console.log("Erro:", xhr.responseText);
+                        alert("Erro ao conectar com o servidor.");
                         btn.prop('disabled', false).html('<i class="fa-solid fa-check-double me-2"></i> ATUALIZAR REGISTRO');
                     }
                 });

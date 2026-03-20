@@ -7,13 +7,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     
     <style>
         :root {
             --primary-purple: #6f42c1;
             --dark-purple: #2d1b4e;
             --accent-blue: #007aff;
-            --bg-gradient: linear-gradient(135deg, #007aff 0%, #003a7a 100%); /* Azul escurecendo conforme pedido */
+            --bg-gradient: linear-gradient(135deg, #007aff 0%, #003a7a 100%);
         }
 
         body { 
@@ -154,7 +156,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-auth">
+        <button type="button" id="btnCadastrar" class="btn btn-auth">
             <i class="fa-solid fa-user-plus me-2"></i>Finalizar Cadastro
         </button>
         
@@ -165,70 +167,69 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-
-$('#formCadastro').on('submit', function(e){
-
-    e.preventDefault();
-
-    const dados = {
-        nome: $('#nome').val(),
-        email: $('#email').val(),
-        telefone: $('#telefone').val(),
-        nascimento: $('#nascimento').val(),
-        genero: $('#genero').val(),
-        senha: $('#senha').val()
-    };
-
-    $.ajax({
-        url: '/api/cadastro_usuario',
-        method: 'POST',
-        contentType: 'application/json',
-        dataType: 'json',
-        data: JSON.stringify(dados),
-
-        success: function(data){
-
-            if(data.erro === 'n'){
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Bem-vindo!',
-                    text: 'Usuário ' + data.data.nome + ' cadastrado com sucesso!',
-                    confirmButtonColor: '#6f42c1'
-                }).then(function(){
-
-                    window.location.href = '/inicio';
-
-                });
-
-            } else {
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Erro ao cadastrar.'
-                });
-
-            }
-
-        },
-
-        error: function(){
-
+$(document).ready(function() {
+    $("#btnCadastrar").click(function() {
+        // Validação básica
+        if ($("#nome").val() === "" || $("#email").val() === "" || $("#senha").val() === "" || 
+            $("#telefone").val() === "" || $("#nascimento").val() === "") {
             Swal.fire({
-                icon: 'error',
-                title: 'Erro de conexão',
-                text: 'Não foi possível falar com o servidor.'
+                icon: 'warning',
+                title: 'Campos obrigatórios',
+                text: 'Preencha todos os campos para se cadastrar.'
             });
-
+            return;
         }
 
+        $.ajax({
+            url: "/api/cadastra_usuario", // Note: é 'cadastra' com 'a' no controller
+            method: "POST",
+            data: { 
+                nome: $("#nome").val(),
+                email: $("#email").val(),
+                senha: $("#senha").val(),
+                telefone: $("#telefone").val(),
+                nascimento: $("#nascimento").val(),
+                genero: $("#genero").val()
+                // Token não é necessário para cadastro
+            },
+            success: function(response) {
+                console.log(response);
+                if (response['erro'] == 'n') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Bem-vindo!',
+                        text: 'Usuário ' + response.data.nome + ' cadastrado com sucesso!',
+                        confirmButtonColor: '#6f42c1'
+                    }).then(function() {
+                        window.location.href = '/login'; // Redireciona para login após cadastro
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.msg || 'Erro ao cadastrar.'
+                    });
+                }
+            },
+            error: function(xhr) {
+                console.log("Erro ao cadastrar:", xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro de conexão',
+                    text: 'Não foi possível conectar ao servidor.'
+                });
+            }
+        });
     });
 
+    // Permitir cadastro ao pressionar Enter no formulário
+    $("#formCadastro").on('keypress', function(e) {
+        if (e.which === 13) { // Tecla Enter
+            $("#btnCadastrar").click();
+        }
+    });
 });
-
 </script>
 </body>
 </html>

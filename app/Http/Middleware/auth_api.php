@@ -20,32 +20,28 @@ class auth_api
     {
         if($request->has('token')){
             $hoje = Carbon::now();
-            $token = TokenUser::where('token', $request->token)->where('valido_ate','>=',$hoje)->get()->first();
+            $token = TokenUser::where('token', $request->token)
+                              ->where('valido_ate', '>=', $hoje)
+                              ->first();
+            
             if($token){
                 $usuario = Usuario::find($token->user_id);
                 $request->usuario = $usuario;
                 $request->token = $token;
                 return $next($request);
-            }else{
-
-            $data=[
-
+            } else {
+                $data = [
+                    "erro" => 's',
+                    "msg" => 'Token inválido'
+                ];
+                return response()->json($data, 200);
+            }
+        } else {
+            $data = [
                 "erro" => 's',
-                "msg" => 'Token invalido'
+                "msg" => 'Você não enviou o token'
             ];
-            }            
-          return response()->json($data,200);
-        }else{
-
-            $data=[
-
-                "erro" => 's',
-                "msg" => 'Voce não enviou o token'
-
-            ];
-
-            return response()->json($data,200);
+            return response()->json($data, 200);
         }
-
     }
 }

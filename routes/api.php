@@ -10,19 +10,32 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/teste', [TestController::class,'envia_teste']);
-Route::get('/soma', [TestController::class,'soma']);
-Route::post('/salva_samsung', [TestController::class,'salva_samsung']);
-Route::get('/exibe_samsung/{id}',[TestController::Class,'exibe_samsung']);
-Route::get('/todos_samsung',[TestController::Class,'todos_samsung']);
-Route::post('/cadastro_usuario',[UsuarioController::class,'cadastro_usuario']);
-Route::get('/login_usuario',[UsuarioController::class,'login_usuario']);
+// Rotas públicas (não precisam de token)
+Route::post('/cadastra_usuario', [UsuarioController::class, 'cadastra_usuario']);
+Route::post('/login_usuario', [UsuarioController::class, 'login_usuario']); 
 
-Route::middleware(auth_api::class)->group(function() {
-//Colocar pagina que funcionam apenas, após colocar o token
-Route::post('/salva_samsung', [TestController::class,'salva_samsung']);
-Route::put('/altera_loja', [TestController::Class, 'altera_loja']);
-Route::delete('/d_samsung', [TestController::class, 'deletar_samsung']);
+// Rotas do TestController que não precisam de token
+Route::get('/teste', [TestController::class, 'envia_teste']);
+Route::get('/soma', [TestController::class, 'soma']);
+Route::get('/exibe_samsung/{id}', [TestController::class, 'exibe_samsung']);
+Route::get('/todos_samsung', [TestController::class, 'todos_samsung']);
 
-
+// Rotas que precisam de autenticação (token)
+Route::middleware([auth_api::class])->group(function() {
+    // Rotas do TestController
+    Route::post('/salva_samsung', [TestController::class, 'salva_samsung']);
+    Route::put('/altera_loja', [TestController::class, 'altera_loja']);
+    Route::delete('/d_samsung', [TestController::class, 'deletar_samsung']);
+    
+    // Rotas do UsuarioController que precisam de autenticação
+    Route::put('/altera_cadastro', [UsuarioController::class, 'altera_cadastro']);
+    Route::get('/exibe_cadastro/{id}', [UsuarioController::class, 'exibe_cadastro']);
+    Route::get('/todos_cadastros', [UsuarioController::class, 'todos_cadastros']);
+    Route::delete('/apagar_cadastro', [UsuarioController::class, 'apagar_cadastro']);
+    
+    // Rotas para visualização (views) - se estiver usando views
+    Route::get('/visualiza_cadastro/{id_cadastro}', [UsuarioController::class, 'visualiza_cadastro']);
+    Route::get('/deleta_cadastro/{id_cadastro}', [UsuarioController::class, 'deleta_cadastro']);
+    Route::get('/mostra_loja/{id_loja}', [TestController::class, 'mostra_loja']);
+    Route::get('/deleta_samsung/{id_loja}', [TestController::class, 'deleta_samsung']);
 });

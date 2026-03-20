@@ -7,8 +7,9 @@
     <title>Samsung - Painel de Registro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        
     <style>
         :root {
             --primary-purple: #6f42c1;
@@ -535,48 +536,65 @@
 </script>
 
 <script>
-    $(document).ready(function () {
-        $("#salvaraparelho").click(function () {
-            // Validação básica
-            if(!$("#aparelho").val() || !$("#modelo").val() || !$("#cor").val() || !$("#ano").val()) {
-                alert("Por favor, preencha todos os campos obrigatórios!");
-                return;
-            }
-
-            // Loading state
-            const btn = $(this);
-            btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> REGISTRANDO...');
-
-            $.ajax({
-                url: "/api/salva_samsung",
-                method: "POST",
-                data: {
-                    aparelho: $("#aparelho").val(),
-                    modelo: $("#modelo").val(),
-                    cor: $("#cor").val(),
-                    ano: $("#ano").val()
-                },
-                success: function (res) {
-                    console.log(res);
-                    alert("Produto registrado com sucesso!");
+   $(document).ready(function() {
+    console.log("=== VERIFICANDO TOKEN ===");
+    console.log("Todos os cookies:", document.cookie);
+    
+    let token = $.cookie('token');
+    console.log("Token via $.cookie():", token);
+    
+    // Verificar manualmente
+    let cookies = document.cookie.split(';');
+    console.log("Cookies parseados:");
+    cookies.forEach(cookie => {
+        console.log(" -", cookie.trim());
+    });
+    
+    if (!token) {
+        console.log("⚠️ ATENÇÃO: Token NÃO encontrado!");
+        console.log("Redirecionando para login...");
+        window.location.href = '/login';
+    } else {
+        console.log("✅ Token encontrado:", token);
+        console.log("Tamanho do token:", token.length);
+    }
+});
+    $("#salvaraparelho").click(function(){
+        
+        $.ajax({
+            url: "http://127.0.0.1:8000/api/salva_samsung", // URL CORRIGIDA
+            method: "POST",
+            data: { 
+                cor: $("#cor").val(),          // Campo COR
+                ano: $("#ano").val(),           // Campo ANO
+                modelo: $("#modelo").val(),      // Campo MODELO
+                aparelho: $("#aparelho").val(),  // Campo APARELHO
+                token: token                      // Token de autenticação
+            },
+            success: function(res){
+                console.log(res);
+                if(res['erro'] == 'n'){
+                    alert("Samsung cadastrado com sucesso!");
                     
-                    // Limpar formulário
-                    $("#aparelho, #modelo, #cor, #ano").val('');
+                    // Limpar campos
+                    $("#cor").val("");
+                    $("#ano").val("");
+                    $("#modelo").val("");
+                    $("#aparelho").val("");
                     
-                    // Recarregar produtos
+                    // Recarregar a tabela
                     carregarProdutos();
-                    
-                    // Resetar botão
-                    btn.prop('disabled', false).html('<i class="fa-solid fa-cloud-arrow-up me-2"></i> REGISTRAR ITEM');
-                },
-                error: function (xhr) {
-                    console.log("Erro", xhr.responseText);
-                    alert("Erro ao registrar produto. Tente novamente.");
-                    btn.prop('disabled', false).html('<i class="fa-solid fa-cloud-arrow-up me-2"></i> REGISTRAR ITEM');
+                } else {
+                    alert("Erro ao cadastrar: " + (res['msg'] || 'Erro desconhecido'));
                 }
-            });
+            },
+            error: function(xhr) {
+                console.log("Erro:", xhr.responseText);
+                alert("Erro ao conectar com o servidor");
+            }
         });
     });
+;
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

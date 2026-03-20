@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samsung</title>
+    <title>Samsung - Deletar Produto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     
     <style>
         :root {
@@ -192,7 +193,16 @@
     </style>
 </head>
 <body>
-    <input type="hidden" id="id_loja" value="{{$loja->id}}">
+    @php
+        // Verificação de segurança
+        if(!isset($samsung) || !$samsung) {
+            echo '<div class="alert alert-danger m-5">Produto não encontrado! <a href="/index">Voltar</a></div>';
+            exit;
+        }
+    @endphp
+
+    <!-- Agora usando $samsung em vez de $loja -->
+    <input type="hidden" id="id_loja" value="{{ $samsung->id }}">
 
 <nav class="navbar navbar-custom mb-5 shadow">
     <div class="container d-flex justify-content-between align-items-center">
@@ -249,19 +259,19 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <div class="info-label">ID</div>
-                                <div class="info-value">#{{ $loja->id }}</div>
+                                <div class="info-value">#{{ $samsung->id }}</div>
                             </div>
                             <div class="col-6">
                                 <div class="info-label">Aparelho</div>
-                                <div class="info-value">{{ $loja->aparelho }}</div>
+                                <div class="info-value">{{ $samsung->aparelho }}</div>
                             </div>
                             <div class="col-6">
                                 <div class="info-label">Modelo</div>
-                                <div class="info-value">{{ $loja->modelo }}</div>
+                                <div class="info-value">{{ $samsung->modelo }}</div>
                             </div>
                             <div class="col-6">
                                 <div class="info-label">Cor/Ano</div>
-                                <div class="info-value">{{ $loja->cor }} / {{ $loja->ano }}</div>
+                                <div class="info-value">{{ $samsung->cor }} / {{ $samsung->ano }}</div>
                             </div>
                         </div>
                     </div>
@@ -271,26 +281,26 @@
                             <label class="form-label small text-uppercase fw-bold">
                                 <i class="fa-solid fa-mobile me-1"></i>Aparelho
                             </label>
-                            <input value="{{ $loja->aparelho }}" disabled type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24">
+                            <input value="{{ $samsung->aparelho }}" disabled type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24">
                         </div>
                         <div class="mb-3">
                             <label class="form-label small text-uppercase fw-bold">
                                 <i class="fa-solid fa-microchip me-1"></i>Modelo
                             </label>
-                            <input value="{{ $loja->modelo }}" disabled type="text" id="modelo" class="form-control" placeholder="Ex: Ultra / Plus">
+                            <input value="{{ $samsung->modelo }}" disabled type="text" id="modelo" class="form-control" placeholder="Ex: Ultra / Plus">
                         </div>
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="form-label small text-uppercase fw-bold">
                                     <i class="fa-solid fa-palette me-1"></i>Cor
                                 </label>
-                                <input value="{{ $loja->cor }}" disabled type="text" id="cor" class="form-control" placeholder="Titanium">
+                                <input value="{{ $samsung->cor }}" disabled type="text" id="cor" class="form-control" placeholder="Titanium">
                             </div>
                             <div class="col-6 mb-3">
                                 <label class="form-label small text-uppercase fw-bold">
                                     <i class="fa-solid fa-calendar me-1"></i>Ano
                                 </label>
-                                <input value="{{ $loja->ano }}" disabled type="number" id="ano" class="form-control" placeholder="2024">
+                                <input value="{{ $samsung->ano }}" disabled type="number" id="ano" class="form-control" placeholder="2024">
                             </div>
                         </div>
                         
@@ -305,6 +315,10 @@
                         <button type="button" id="salvaraparelho" class="btn btn-purple btn-delete w-100 mt-2" disabled>
                             <i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM
                         </button>
+                        
+                        <a href="/index" class="btn btn-light border w-100 mt-2" style="border-radius: 12px;">
+                            Cancelar
+                        </a>
                     </form>
                 </div>
             </div>
@@ -322,9 +336,6 @@
                         <button onclick="carregarProdutos()" class="btn btn-sm btn-link text-decoration-none p-0" style="color: var(--primary-purple)">
                             <i class="fa-solid fa-rotate"></i> Atualizar
                         </button>
-                        <a href="/index" class="btn btn-sm btn-link text-decoration-none p-0" style="color: var(--primary-purple)">
-                            <i class="fa-solid fa-arrow-left"></i> Voltar
-                        </a>
                     </div>
                 </div>
                 
@@ -388,8 +399,8 @@
                 document.getElementById('itemsCount').textContent = data.samsung.length;
                 
                 data.samsung.forEach(item => {
-                    // Destacar o item que está sendo deletado
-                    const isCurrentItem = item.id == {{ $loja->id }};
+                    // Destacar o item que está sendo deletado - Agora usando $samsung
+                    const isCurrentItem = item.id == {{ $samsung->id }};
                     const rowStyle = isCurrentItem ? 'style="background-color: rgba(220, 53, 69, 0.05); border-left: 3px solid #dc3545;"' : '';
                     
                     tabela.innerHTML += `
@@ -456,33 +467,52 @@
             }
 
             if(confirm('Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita!')) {
+                
+                // PEGAR O TOKEN DO COOKIE
+                let token = $.cookie('token');
+                
+                if (!token) {
+                    alert("Token não encontrado! Faça login novamente.");
+                    window.location.href = '/login';
+                    return;
+                }
+
                 $.ajax({
                     url: "/api/d_samsung",
                     method: "DELETE",
                     data: {
-                        cor: $("#cor").val(),
-                        ano: $("#ano").val(),
-                        modelo: $("#modelo").val(),
-                        aparelho: $("#aparelho").val(),
-                        id_loja: $("#id_loja").val()
+                        id_loja: $("#id_loja").val(),  // Só precisa do ID para deletar
+                        token: token  // TOKEN OBRIGATÓRIO
                     },
                     beforeSend: function() {
                         $('#salvaraparelho').prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i> DELETANDO...');
                     },
                     success: function (res) {
                         console.log(res);
-                        alert('Produto deletado com sucesso!');
-                        window.location.href = '/index';
+                        if(res['erro'] == 'n') {
+                            alert('Produto deletado com sucesso!');
+                            window.location.href = '/index';
+                        } else {
+                            alert('Erro: ' + (res['msg'] || 'Erro desconhecido'));
+                            $('#salvaraparelho').prop('disabled', false).html('<i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM');
+                        }
                     },
                     error: function (xhr) {
                         console.log("Erro", xhr.responseText);
-                        alert('Erro ao deletar produto. Tente novamente.');
+                        
+                        if(xhr.status === 405) {
+                            alert("Erro: Método não permitido. Verifique se a rota aceita DELETE.");
+                        } else if(xhr.status === 500) {
+                            alert("Erro interno no servidor. Verifique os logs.");
+                        } else {
+                            alert('Erro ao deletar produto. Tente novamente.');
+                        }
+                        
                         $('#salvaraparelho').prop('disabled', false).html('<i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM');
                     }
                 });
             }
         });
-
     });
 </script>
 

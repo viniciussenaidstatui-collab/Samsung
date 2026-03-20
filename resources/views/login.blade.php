@@ -7,7 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
@@ -90,7 +92,7 @@
             <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
         </div>
 
-        <button type="submit" class="btn btn-auth">
+        <button type="button" id="btnLogin" class="btn btn-auth">
             <i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Portal
         </button>
 
@@ -100,50 +102,68 @@
     </form>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.getElementById('formLogin').addEventListener('submit', function(e) {
-        e.preventDefault();
+$(document).ready(function() {
+    $("#btnLogin").click(function() {
+        // Validação básica
+        if ($("#email").val() === "" || $("#senha").val() === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos obrigatórios',
+                text: 'Preencha todos os campos para fazer login.'
+            });
+            return;
+        }
 
-        const email = document.getElementById('email').value;
-        const senha = document.getElementById('senha').value;
-
-        // Note: sua rota na api.php está como GET. 
-        // Para passar parâmetros no GET via fetch, usamos a Query String:
-        fetch(`/api/login_usuario?email=${email}&senha=${senha}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.erro === 'n' && data.msg === 'Usuario Logado') {
-                // SALVAR O TOKEN: Muito importante para manter o usuário logado
-                localStorage.setItem('user_token', data.token);
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login realizado!',
-                    text: 'Redirecionando para o painel...',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.href = '/inicio';
-                });
-            } else {
+        $.ajax({
+            url: "/api/login_usuario",
+            method: "POST",
+            data: { 
+                email: $("#email").val(),
+                senha: $("#senha").val()
+            },
+            success: function(response) {
+                if (response['erro'] == 'n' && response['msg'] == 'Usuário Logado') {
+                    // Salva o token no cookie por 7 dias
+                    $.cookie('token', response['token'], { expires: 7, path: '/' });
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login realizado!',
+                        text: 'Redirecionando para o painel...',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    
+                    setTimeout(function() {
+                        window.location.href = "/inicio";
+                    }, 2000);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Falha no Login',
+                        text: response['msg'] || 'Credenciais incorretas.'
+                    });
+                }
+            },
+            error: function(xhr) {
+                console.log("Erro ao fazer login:", xhr.responseText);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Falha no Login',
-                    text: data.msg || 'Credenciais incorretas.'
+                    title: 'Erro de conexão',
+                    text: 'Não foi possível conectar ao servidor.'
                 });
             }
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            Swal.fire({ icon: 'error', title: 'Erro de conexão' });
         });
     });
+
+    // Permitir login ao pressionar Enter no formulário
+    $("#formLogin").on('keypress', function(e) {
+        if (e.which === 13) { // Tecla Enter
+            $("#btnLogin").click();
+        }
+    });
+});
 </script>
 </body>
 </html>

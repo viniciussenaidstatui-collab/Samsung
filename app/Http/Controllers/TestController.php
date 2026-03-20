@@ -7,167 +7,125 @@ use App\Models\SamsungModel;
 
 class TestController extends Controller
 {
-    public function envia_teste(Request $request) 
-    
+    public function salva_samsung(Request $request)  
     {
+        $request->validate([
+            'cor' => 'required',
+            'ano' => 'required',
+            'modelo' => 'required',
+            'aparelho' => 'required'
+        ]);
 
-    $data = [
-        'palmeiras'=> "5x1",
-        'Numero'=>$request->numero
-    ];
+        try {
+            $samsung = new SamsungModel();
+            $samsung->cor = $request->cor;
+            $samsung->ano = $request->ano;
+            $samsung->modelo = $request->modelo;
+            $samsung->aparelho = $request->aparelho;
+            $samsung->save();
 
-    return response() ->json($data, 200);   
-    }
+            $data = [
+                'erro' => 'n',
+                'samsung' => $samsung,
+            ];
 
+            return response()->json($data, 200);
 
-    public function soma(Request $request) {
-    $data = [
-        'Soma' => $request->numero + $request->numero_dois,
-    ];
-
-    return response()->json($data, 200);
-
-    }
-
-    public function salva_samsung(Request $request)  {
-
-    $request->validate(  [
-        'cor' => 'required',
-        'ano' => 'required',
-        'modelo' => 'required',
-        'aparelho' => 'required'
-
-    ]);
-
-    try {
-
-    $samsung = new SamsungModel();
-    $samsung->cor = $request -> cor;
-    $samsung->ano = $request -> ano;
-    $samsung->modelo = $request -> modelo;
-    $samsung->aparelho = $request -> aparelho;
-    $samsung->save();
-
-    $data = [
-            'erro' => 'n',
-            'samsung' => $samsung,
-    ];
-
-    return response()->json($data,200);
-
-    }catch(\Throwable $th) {
-        throw $th;
+        } catch(\Throwable $th) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => $th->getMessage()
+            ], 500);
         }
-
     }
-
     public function exibe_samsung($id)
-    
     {
-    $samsung=SamsungModel::find($id);
+        $samsung = SamsungModel::find($id);
 
-    return view('visualiza_cadastro')->with('id_samsung', $samsung->id);
-    
-    $data = [
+        $data = [
             'erro' => 'n',
             'samsung' => $samsung,
+        ];
 
-    ];
-    return response()->json($data, 200);
-
-
+        return response()->json($data, 200);
     }
 
     public function todos_samsung(Request $request)
     {
-    $samsung=SamsungModel::get()->all();
+        $samsung = SamsungModel::get()->all();
 
-    $data = [
+        $data = [
             'erro' => 'n',
             'samsung' => $samsung,
+        ];
 
-    ];
-    return response()->json($data, 200);
+        return response()->json($data, 200);
     }
 
-    public function mostra_loja($id_loja){
-    
-    $loja = SamsungModel::find($id_loja);
+    public function mostra_loja($id_loja)
+    {
+        $samsung = SamsungModel::find($id_loja);
 
-    return view('alterar')->with('loja',$loja);
-
+        return view('alterar')->with('samsung', $samsung);
     }
 
-    
-    public function altera_loja(Request $request){
+    public function altera_loja(Request $request)
+    {
+        $request->validate([
+            'cor' => 'required',
+            'ano' => 'required',
+            'modelo' => 'required',
+            'aparelho' => 'required',
+            'id_loja' => 'required'
+        ]);
 
-    $request->validate(  [
-        'cor' => 'required',
-        'ano' => 'required',
-        'modelo' => 'required',
-        'aparelho' => 'required'
+        try {
+            $samsung = SamsungModel::find($request->id_loja);
+            $samsung->cor = $request->cor;
+            $samsung->ano = $request->ano;
+            $samsung->modelo = $request->modelo;
+            $samsung->aparelho = $request->aparelho;
+            $samsung->save();
 
-    ]);
+            $data = [
+                'erro' => 'n',
+                'samsung' => $samsung,
+            ];
 
-    try {
+            return response()->json($data, 200);
 
-    $samsung = SamsungModel::find($request->id_loja);
-
-   
-    $samsung->cor = $request -> cor;
-    $samsung->ano = $request -> ano;
-    $samsung->modelo = $request -> modelo;
-    $samsung->aparelho = $request -> aparelho;
-    
-    $samsung->save();
-
-    $data = [
-            'erro' => 'n',
-            'samsung' => $samsung,
-    ];
-
-    return response()->json($data,200);
-
-    }catch(\Throwable $th) {
-        throw $th;
+        } catch(\Throwable $th) {
+            throw $th;
         }
-
-    
-
-
-    }
-    
-    public function deleta_samsung ($id_loja){
-        $loja = SamsungModel::find($id_loja);
-
-
-        return view ('deleta_samsung')->with('loja',$loja);
-
-
-
     }
 
-    public function deletar_samsung (Request $request){
+    public function deleta_samsung($id_loja)
+    {
+        $samsung = SamsungModel::find($id_loja);
+
+        return view('deleta_samsung')->with('samsung', $samsung);
+    }
+
+    public function deletar_samsung(Request $request)
+    {
         $request->validate([
             'id_loja' => 'required'
         ]);
 
         try {
-            $loja = SamsungModel::find ($request->id_loja);
-            $loja-> delete();
-            $data = [
+            $samsung = SamsungModel::find($request->id_loja);
+            $samsung->delete();
 
-            'erro' => 'n',
-            'msg' => 'loja deletada'
+            $data = [
+                'erro' => 'n',
+                'msg' => 'Registro deletado com sucesso',
+                'samsung' => $samsung
             ];
-            
-        } catch (\Throwable $th) {
+
+            return response()->json($data, 200);
+
+        } catch(\Throwable $th) {
             throw $th;
         }
-
-
     }
-
-    
-    
-    }
+}
