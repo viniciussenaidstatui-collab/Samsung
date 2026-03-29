@@ -98,6 +98,9 @@
 
         <div class="text-center mt-4">
             <p class="small">Não tem conta? <a href="/cadastro" class="text-decoration-none fw-bold" style="color: var(--primary-purple);">Cadastre-se</a></p>
+
+            <p class="small text-muted">Administrador? <a href="/login_admin" class="text-decoration-none fw-bold" style="color: var(--dark-purple);">Vá por aqui</a></p>
+</div>
         </div>
     </form>
 </div>
