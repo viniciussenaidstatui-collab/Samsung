@@ -91,16 +91,8 @@
             text-decoration: none;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-
-        .nav-item.active {
-            background: var(--primary-purple);
-            color: white;
-        }
-
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
+        .nav-item.active { background: var(--primary-purple); color: white; }
         .nav-item i { width: 18px; text-align: center; font-size: 0.9rem; }
 
         .sidebar-footer {
@@ -150,22 +142,13 @@
             justify-content: space-between;
         }
 
-        .topbar h1 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--dark-purple);
-        }
-
-        .topbar .meta {
-            font-size: 0.82rem;
-            color: #999;
-            margin-top: 2px;
-        }
+        .topbar h1 { font-size: 1.3rem; font-weight: 800; color: var(--dark-purple); }
+        .topbar .meta { font-size: 0.82rem; color: #999; margin-top: 2px; }
 
         .topbar-right {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .status-dot {
@@ -181,10 +164,29 @@
             100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
         }
 
-        .status-text {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #2ecc71;
+        .status-text { font-size: 0.8rem; font-weight: 600; color: #2ecc71; }
+
+        /* ── BOTÃO OBTER DADOS ── */
+        .btn-export {
+            background: linear-gradient(135deg, var(--primary-purple), #4a2a9a);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 18px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .btn-export:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(111,66,193,0.35);
         }
 
         .btn-logout {
@@ -200,16 +202,10 @@
             transition: all 0.2s;
         }
 
-        .btn-logout:hover {
-            background: #dc3545;
-            color: white;
-        }
+        .btn-logout:hover { background: #dc3545; color: white; }
 
         /* ── CONTENT ── */
-        .content {
-            padding: 32px;
-            flex: 1;
-        }
+        .content { padding: 32px; flex: 1; }
 
         /* ── METRIC CARDS ── */
         .metric-grid {
@@ -233,8 +229,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0;
-            width: 4px;
-            height: 100%;
+            width: 4px; height: 100%;
             border-radius: 4px 0 0 4px;
         }
 
@@ -243,10 +238,7 @@
         .metric-card.green::before  { background: #2ecc71; }
         .metric-card.orange::before { background: #f39c12; }
 
-        .metric-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.07);
-        }
+        .metric-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.07); }
 
         .metric-icon {
             width: 44px; height: 44px;
@@ -261,27 +253,9 @@
         .metric-card.green  .metric-icon { background: #eafaf1; color: #27ae60; }
         .metric-card.orange .metric-icon { background: #fef9e7; color: #e67e22; }
 
-        .metric-label {
-            font-size: 0.78rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #999;
-            margin-bottom: 6px;
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--dark-purple);
-            line-height: 1;
-        }
-
-        .metric-sub {
-            font-size: 0.78rem;
-            color: #bbb;
-            margin-top: 6px;
-        }
+        .metric-label { font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 6px; }
+        .metric-value { font-size: 2rem; font-weight: 800; color: var(--dark-purple); line-height: 1; }
+        .metric-sub   { font-size: 0.78rem; color: #bbb; margin-top: 6px; }
 
         /* ── CHARTS ── */
         .charts-grid {
@@ -307,17 +281,8 @@
             margin-bottom: 20px;
         }
 
-        .chart-title {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--dark-purple);
-        }
-
-        .chart-subtitle {
-            font-size: 0.78rem;
-            color: #aaa;
-            margin-top: 2px;
-        }
+        .chart-title    { font-size: 1rem; font-weight: 800; color: var(--dark-purple); }
+        .chart-subtitle { font-size: 0.78rem; color: #aaa; margin-top: 2px; }
 
         .chart-badge {
             background: var(--soft-purple);
@@ -337,11 +302,7 @@
             margin-bottom: 32px;
         }
 
-        .table-admin {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.88rem;
-        }
+        .table-admin { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
 
         .table-admin thead th {
             text-align: left;
@@ -354,40 +315,21 @@
             border-bottom: 1px solid #f0f0f5;
         }
 
-        .table-admin tbody tr {
-            border-bottom: 1px solid #f9f9fb;
-            transition: background 0.15s;
-        }
-
+        .table-admin tbody tr { border-bottom: 1px solid #f9f9fb; transition: background 0.15s; }
         .table-admin tbody tr:hover { background: #fafafc; }
+        .table-admin tbody td { padding: 12px 14px; color: #333; }
 
-        .table-admin tbody td {
-            padding: 12px 14px;
-            color: #333;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
+        .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
         .tag-purple { background: var(--soft-purple); color: var(--primary-purple); }
         .tag-blue   { background: #e8f4ff; color: var(--accent-blue); }
 
         /* ── LOADING ── */
         .loading-overlay {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background: rgba(255,255,255,0.85);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            gap: 16px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9999; gap: 16px;
         }
 
         .spinner {
@@ -399,24 +341,123 @@
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 0.9rem; font-weight: 600; color: #888; }
 
-        .loading-text {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #888;
-        }
-
-        /* ── RESPONSIVO ── */
         @media (max-width: 900px) {
             .sidebar { display: none; }
             .main { margin-left: 0; }
             .charts-grid { grid-template-columns: 1fr; }
         }
+
+        /* ══════════════════════════════════════
+           ESTILOS DE IMPRESSÃO / PDF
+        ══════════════════════════════════════ */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+            body { background: white !important; font-size: 12px; }
+
+            .sidebar, .topbar, .loading-overlay { display: none !important; }
+
+            .main { margin-left: 0 !important; }
+            .content { padding: 0 20px !important; }
+
+            /* Cabeçalho do relatório */
+            .print-header {
+                display: flex !important;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px 0 16px;
+                border-bottom: 3px solid #2d1b4e;
+                margin-bottom: 24px;
+            }
+
+            .print-header .ph-brand { display: flex; align-items: center; gap: 12px; }
+
+            .print-header .ph-logo {
+                width: 44px; height: 44px;
+                background: #6f42c1 !important;
+                border-radius: 10px;
+                display: flex; align-items: center; justify-content: center;
+                color: white !important;
+                font-weight: 800;
+                font-size: 0.75rem;
+            }
+
+            .print-header h2 { font-size: 1.2rem; font-weight: 800; color: #2d1b4e; margin: 0; }
+            .print-header .ph-sub { font-size: 0.75rem; color: #888; margin-top: 2px; }
+            .print-header .ph-meta { text-align: right; font-size: 0.75rem; color: #888; line-height: 1.6; }
+
+            /* Métricas */
+            .metric-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 10px !important;
+                margin-bottom: 18px !important;
+            }
+
+            .metric-card {
+                border-radius: 10px !important;
+                padding: 14px !important;
+                border: 1px solid #ddd !important;
+                break-inside: avoid;
+                box-shadow: none !important;
+                transform: none !important;
+            }
+
+            .metric-icon { width: 30px !important; height: 30px !important; margin-bottom: 8px !important; font-size: 0.85rem !important; }
+            .metric-value { font-size: 1.5rem !important; }
+            .metric-label { font-size: 0.62rem !important; }
+            .metric-sub   { font-size: 0.62rem !important; }
+
+            /* Gráficos */
+            .charts-grid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 12px !important;
+                margin-bottom: 18px !important;
+            }
+
+            .chart-card {
+                border-radius: 10px !important;
+                padding: 14px !important;
+                border: 1px solid #ddd !important;
+                break-inside: avoid;
+            }
+
+            .chart-title    { font-size: 0.88rem !important; }
+            .chart-subtitle { font-size: 0.7rem !important; }
+
+            /* Tabelas */
+            .table-card {
+                border-radius: 10px !important;
+                padding: 14px !important;
+                border: 1px solid #ddd !important;
+                margin-bottom: 16px !important;
+                break-inside: avoid;
+            }
+
+            .table-admin thead th { font-size: 0.62rem !important; padding: 6px 10px !important; }
+            .table-admin tbody td { padding: 7px 10px !important; font-size: 0.75rem !important; }
+            .table-admin tbody tr:hover { background: transparent !important; }
+
+            /* Rodapé */
+            .print-footer {
+                display: block !important;
+                text-align: center;
+                font-size: 0.7rem;
+                color: #bbb;
+                border-top: 1px solid #eee;
+                padding-top: 12px;
+                margin-top: 8px;
+            }
+        }
+
+        /* Ocultar elementos de print na tela */
+        .print-header, .print-footer { display: none; }
     </style>
 </head>
 <body>
 
-<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text">Carregando dados...</div>
@@ -470,6 +511,12 @@
         <div class="topbar-right">
             <div class="status-dot"></div>
             <span class="status-text">Sistema Online</span>
+
+            <!-- BOTÃO OBTER DADOS -->
+            <button class="btn-export" id="btnExport">
+                <i class="fa-solid fa-file-arrow-down"></i> Obter dados
+            </button>
+
             <button class="btn-logout" id="btnLogout">
                 <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>Sair
             </button>
@@ -477,7 +524,23 @@
     </div>
 
     <!-- Content -->
-    <div class="content">
+    <div class="content" id="printArea">
+
+        <!-- Cabeçalho visível apenas no PDF -->
+        <div class="print-header">
+            <div class="ph-brand">
+                <div class="ph-logo">SAM</div>
+                <div>
+                    <h2>Samsung — Relatório do Dashboard</h2>
+                    <div class="ph-sub">Painel Administrativo Interno</div>
+                </div>
+            </div>
+            <div class="ph-meta">
+                <div id="printData"></div>
+                <div>Gerado por: Administrador</div>
+                <div>Documento de uso restrito</div>
+            </div>
+        </div>
 
         <!-- Métricas -->
         <div class="metric-grid">
@@ -509,8 +572,6 @@
 
         <!-- Gráficos -->
         <div class="charts-grid">
-
-            <!-- Aparelhos por Modelo -->
             <div class="chart-card">
                 <div class="chart-header">
                     <div>
@@ -524,7 +585,6 @@
                 </div>
             </div>
 
-            <!-- Aparelhos por Cor -->
             <div class="chart-card">
                 <div class="chart-header">
                     <div>
@@ -538,7 +598,6 @@
                 </div>
             </div>
 
-            <!-- Aparelhos por Ano (full width) -->
             <div class="chart-card full">
                 <div class="chart-header">
                     <div>
@@ -553,7 +612,7 @@
             </div>
         </div>
 
-        <!-- Tabela de últimos aparelhos -->
+        <!-- Tabela aparelhos -->
         <div class="table-card">
             <div class="chart-header">
                 <div>
@@ -567,20 +626,16 @@
             <table class="table-admin">
                 <thead>
                     <tr>
-                        <th>#ID</th>
-                        <th>Aparelho</th>
-                        <th>Modelo</th>
-                        <th>Cor</th>
-                        <th>Ano</th>
+                        <th>#ID</th><th>Aparelho</th><th>Modelo</th><th>Cor</th><th>Ano</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaAparelhos">
-                    <tr><td colspan="5" style="text-align:center; color:#ccc; padding:20px;">Carregando...</td></tr>
+                    <tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px;">Carregando...</td></tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Tabela de usuários -->
+        <!-- Tabela usuários -->
         <div class="table-card">
             <div class="chart-header">
                 <div>
@@ -591,17 +646,18 @@
             <table class="table-admin">
                 <thead>
                     <tr>
-                        <th>#ID</th>
-                        <th>Nome</th>
-                        <th>E-mail</th>
-                        <th>Gênero</th>
-                        <th>Telefone</th>
+                        <th>#ID</th><th>Nome</th><th>E-mail</th><th>Gênero</th><th>Telefone</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaUsuarios">
-                    <tr><td colspan="5" style="text-align:center; color:#ccc; padding:20px;">Carregando...</td></tr>
+                    <tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px;">Carregando...</td></tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Rodapé visível apenas no PDF -->
+        <div class="print-footer">
+            Samsung Electronics &mdash; Documento gerado automaticamente pelo painel administrativo interno. Uso restrito.
         </div>
 
     </div><!-- /content -->
@@ -610,17 +666,17 @@
 <script>
 $(document).ready(function () {
 
-    // ── VERIFICAR SE ESTÁ LOGADO COMO ADMIN ──
     if (sessionStorage.getItem('admin_logado') !== 'true') {
         window.location.href = '/login_admin';
         return;
     }
 
-    // ── DATA ATUAL ──
     const agora = new Date();
-    $('#dataAtual').text(agora.toLocaleDateString('pt-BR', {
+    const dataFormatada = agora.toLocaleDateString('pt-BR', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    }));
+    });
+    $('#dataAtual').text(dataFormatada);
+    $('#printData').text('Emitido em: ' + agora.toLocaleString('pt-BR'));
 
     // ── LOGOUT ──
     $('#btnLogout').click(function () {
@@ -641,7 +697,31 @@ $(document).ready(function () {
         });
     });
 
-    // ── INSTÂNCIAS DOS GRÁFICOS ──
+    // ── BOTÃO OBTER DADOS ──
+    $('#btnExport').click(function () {
+        Swal.fire({
+            title: '<i class="fa-solid fa-file-arrow-down me-2" style="color:#6f42c1;"></i>Obter dados',
+            html: `
+                <p style="color:#555; font-size:0.9rem; line-height:1.6;">
+                    O relatório completo será aberto para impressão.<br>
+                    Na janela que abrir, selecione <strong>"Salvar como PDF"</strong>
+                    no campo de impressora para baixar o arquivo.
+                </p>
+            `,
+            showCancelButton: true,
+            confirmButtonColor: '#6f42c1',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: '<i class="fa-solid fa-print me-1"></i> Imprimir / Salvar PDF',
+            cancelButtonText: 'Cancelar',
+            customClass: { confirmButton: 'px-4', cancelButton: 'px-4' }
+        }).then(result => {
+            if (result.isConfirmed) {
+                setTimeout(function () { window.print(); }, 350);
+            }
+        });
+    });
+
+    // ── GRÁFICOS ──
     let chartModelo, chartCor, chartAno;
 
     const COLORS = [
@@ -650,49 +730,31 @@ $(document).ready(function () {
         '#e67e22','#34495e','#e91e63','#00bcd4'
     ];
 
-    // ── CARREGAR DADOS ──
     function carregarDados() {
 
-        // ── 1. APARELHOS ──
         $.ajax({
             url: '/api/todos_samsung',
             method: 'GET',
             success: function (res) {
                 if (res.erro !== 'n') return;
-
                 const lista = res.samsung || [];
 
-                // Métricas
                 $('#totalAparelhos').text(lista.length);
+                $('#totalCores').text([...new Set(lista.map(i => i.cor).filter(Boolean))].length);
+                $('#totalAnos').text([...new Set(lista.map(i => i.ano).filter(Boolean))].length);
 
-                // Cores distintas
-                const cores  = [...new Set(lista.map(i => i.cor).filter(Boolean))];
-                const anos   = [...new Set(lista.map(i => i.ano).filter(Boolean))].sort();
-                const modelos = [...new Set(lista.map(i => i.modelo).filter(Boolean))];
-
-                $('#totalCores').text(cores.length);
-                $('#totalAnos').text(anos.length);
-
-                // ── Gráfico: Aparelhos por Modelo ──
-                const contagemModelo = {};
-                lista.forEach(i => { contagemModelo[i.modelo] = (contagemModelo[i.modelo] || 0) + 1; });
-
+                // Gráfico Modelo
+                const cModelo = {};
+                lista.forEach(i => { cModelo[i.modelo] = (cModelo[i.modelo] || 0) + 1; });
                 if (chartModelo) chartModelo.destroy();
                 chartModelo = new Chart(document.getElementById('chartModelo'), {
                     type: 'bar',
                     data: {
-                        labels: Object.keys(contagemModelo),
-                        datasets: [{
-                            label: 'Quantidade',
-                            data: Object.values(contagemModelo),
-                            backgroundColor: COLORS.slice(0, Object.keys(contagemModelo).length),
-                            borderRadius: 8,
-                            borderSkipped: false
-                        }]
+                        labels: Object.keys(cModelo),
+                        datasets: [{ label: 'Quantidade', data: Object.values(cModelo), backgroundColor: COLORS, borderRadius: 8, borderSkipped: false }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
                             y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f5' } },
@@ -701,36 +763,26 @@ $(document).ready(function () {
                     }
                 });
 
-                // ── Gráfico: Aparelhos por Cor ──
-                const contagemCor = {};
-                lista.forEach(i => { contagemCor[i.cor] = (contagemCor[i.cor] || 0) + 1; });
-
+                // Gráfico Cor
+                const cCor = {};
+                lista.forEach(i => { cCor[i.cor] = (cCor[i.cor] || 0) + 1; });
                 if (chartCor) chartCor.destroy();
                 chartCor = new Chart(document.getElementById('chartCor'), {
                     type: 'doughnut',
                     data: {
-                        labels: Object.keys(contagemCor),
-                        datasets: [{
-                            data: Object.values(contagemCor),
-                            backgroundColor: COLORS.slice(0, Object.keys(contagemCor).length),
-                            borderWidth: 3,
-                            borderColor: '#fff'
-                        }]
+                        labels: Object.keys(cCor),
+                        datasets: [{ data: Object.values(cCor), backgroundColor: COLORS, borderWidth: 3, borderColor: '#fff' }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'right', labels: { boxWidth: 12, padding: 16, font: { size: 12 } } }
-                        }
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'right', labels: { boxWidth: 12, padding: 16, font: { size: 12 } } } }
                     }
                 });
 
-                // ── Gráfico: Aparelhos por Ano ──
-                const contagemAno = {};
-                lista.forEach(i => { contagemAno[i.ano] = (contagemAno[i.ano] || 0) + 1; });
-                const anosOrdenados = Object.keys(contagemAno).sort();
-
+                // Gráfico Ano
+                const cAno = {};
+                lista.forEach(i => { cAno[i.ano] = (cAno[i.ano] || 0) + 1; });
+                const anosOrdenados = Object.keys(cAno).sort();
                 if (chartAno) chartAno.destroy();
                 chartAno = new Chart(document.getElementById('chartAno'), {
                     type: 'line',
@@ -738,7 +790,7 @@ $(document).ready(function () {
                         labels: anosOrdenados,
                         datasets: [{
                             label: 'Aparelhos',
-                            data: anosOrdenados.map(a => contagemAno[a]),
+                            data: anosOrdenados.map(a => cAno[a]),
                             borderColor: '#6f42c1',
                             backgroundColor: 'rgba(111,66,193,0.08)',
                             borderWidth: 2.5,
@@ -749,8 +801,7 @@ $(document).ready(function () {
                         }]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
                             y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f5' } },
@@ -759,34 +810,24 @@ $(document).ready(function () {
                     }
                 });
 
-                // ── Tabela de aparelhos (últimos 8) ──
+                // Tabela aparelhos
                 const ultimos = lista.slice(-8).reverse();
-                let html = '';
-                if (ultimos.length === 0) {
-                    html = '<tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px;">Nenhum aparelho cadastrado.</td></tr>';
-                } else {
-                    ultimos.forEach(ap => {
-                        html += `
+                let html = ultimos.length === 0
+                    ? '<tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px;">Nenhum aparelho cadastrado.</td></tr>'
+                    : ultimos.map(ap => `
                         <tr>
                             <td style="color:#bbb;">#${ap.id}</td>
                             <td><strong>${ap.aparelho || '—'}</strong></td>
                             <td><span class="tag tag-purple">${ap.modelo || '—'}</span></td>
                             <td>${ap.cor || '—'}</td>
                             <td><span class="tag tag-blue">${ap.ano || '—'}</span></td>
-                        </tr>`;
-                    });
-                }
+                        </tr>`).join('');
                 $('#tabelaAparelhos').html(html);
             },
-            error: function () {
-                $('#totalAparelhos').text('Erro');
-            }
+            error: function () { $('#totalAparelhos').text('Erro'); }
         });
 
-        // ── 2. USUÁRIOS ──
-        // Para acessar todos_cadastros é necessário token válido.
-        // Aqui usamos o token salvo em cookie (se existir) ou tentamos sem token
-        // já que o admin pode não ter token da API regular.
+        // Usuários
         const tokenApi = document.cookie.split(';').find(c => c.trim().startsWith('token='));
         const tokenVal = tokenApi ? tokenApi.split('=')[1] : null;
 
@@ -796,50 +837,32 @@ $(document).ready(function () {
             success: function (res) {
                 if (res.erro !== 'n') {
                     $('#totalContas').text('—');
-                    $('#tabelaUsuarios').html(
-                        '<tr><td colspan="5" style="text-align:center;color:#f39c12;padding:20px;">' +
-                        '<i class="fa-solid fa-triangle-exclamation me-1"></i>' +
-                        'Token de API necessário para listar usuários.</td></tr>'
-                    );
+                    $('#tabelaUsuarios').html('<tr><td colspan="5" style="text-align:center;color:#f39c12;padding:20px;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Token de API necessário para listar usuários.</td></tr>');
                     return;
                 }
-
                 const lista = res.usuarios || [];
                 $('#totalContas').text(lista.length);
-
-                let html = '';
-                if (lista.length === 0) {
-                    html = '<tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px;">Nenhum usuário cadastrado.</td></tr>';
-                } else {
-                    lista.forEach(u => {
-                        html += `
+                let html = lista.length === 0
+                    ? '<tr><td colspan="5" style="text-align:center;color:#ccc;padding:20px;">Nenhum usuário cadastrado.</td></tr>'
+                    : lista.map(u => `
                         <tr>
                             <td style="color:#bbb;">#${u.id}</td>
                             <td><strong>${u.nome || '—'}</strong></td>
                             <td style="color:#666;">${u.email || '—'}</td>
                             <td><span class="tag tag-purple">${u.genero || '—'}</span></td>
                             <td>${u.telefone || '—'}</td>
-                        </tr>`;
-                    });
-                }
+                        </tr>`).join('');
                 $('#tabelaUsuarios').html(html);
             },
             error: function () {
                 $('#totalContas').text('Erro');
-                $('#tabelaUsuarios').html(
-                    '<tr><td colspan="5" style="text-align:center;color:#e74c3c;padding:20px;">Erro ao carregar usuários.</td></tr>'
-                );
+                $('#tabelaUsuarios').html('<tr><td colspan="5" style="text-align:center;color:#e74c3c;padding:20px;">Erro ao carregar usuários.</td></tr>');
             }
         });
     }
 
-    // Carregar dados e esconder loading
     carregarDados();
-
-    setTimeout(function () {
-        $('#loadingOverlay').fadeOut(400);
-    }, 800);
-
+    setTimeout(function () { $('#loadingOverlay').fadeOut(400); }, 800);
 });
 </script>
 

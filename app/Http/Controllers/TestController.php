@@ -31,7 +31,7 @@ class TestController extends Controller
             $samsung->ano = $request->ano;
             $samsung->modelo = $request->modelo;
             $samsung->aparelho = $request->aparelho;
-             $samsung->user_id = $usuario->id;
+            $samsung->user_id = $usuario->id;
             $samsung->save();
 
             $data = [

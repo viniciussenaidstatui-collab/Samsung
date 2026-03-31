@@ -270,16 +270,13 @@
 </div>
 
 <script>
-    // =============================================
-    // CREDENCIAIS DO ADMIN (fixas, conforme pedido)
-    // =============================================
+    
     const ADMIN_EMAIL = 'vinicius@gmail.com';
     const ADMIN_SENHA = '123456';
-    // =============================================
+    
 
     $(document).ready(function () {
 
-        // Se já está logado, redireciona direto
         if (sessionStorage.getItem('admin_logado') === 'true') {
             window.location.href = '/dashboard_admin';
         }
