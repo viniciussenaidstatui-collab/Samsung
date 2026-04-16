@@ -1,0 +1,1181 @@
+{
+    "info": {
+        "name": "Laravel API",
+        "description": "Auto-generated Laravel API Inspector Postman collection",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Retrieve Api-inspector-docs",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Api-inspector-docs"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Postman",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/postman",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "postman"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Postman"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Api-inspector-postman",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-postman",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-postman"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Api-inspector-postman"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Openapi",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/openapi",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "openapi"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Openapi"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Api-inspector-openapi",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-openapi",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-openapi"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Api-inspector-openapi"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Realtime",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/realtime",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "realtime"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Realtime"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Test-request",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector/test-request",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector",
+                        "test-request"
+                    ],
+                    "query": []
+                },
+                "description": "Create Test-request"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Save-response",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/save-response",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "save-response"
+                    ],
+                    "query": []
+                },
+                "description": "Create Save-response"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Get-saved-responses",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/get-saved-responses",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "get-saved-responses"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Get-saved-responses"
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Delete-response",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/delete-response",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "delete-response"
+                    ],
+                    "query": []
+                },
+                "description": "Delete Delete-response"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Save-request-example",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/save-request-example",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "save-request-example"
+                    ],
+                    "query": []
+                },
+                "description": "Create Save-request-example"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Get-request-examples",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/get-request-examples",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "get-request-examples"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Get-request-examples"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Delete-request-example",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/delete-request-example",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "delete-request-example"
+                    ],
+                    "query": []
+                },
+                "description": "Create Delete-request-example"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Analytics",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/api-inspector-docs/analytics",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "api-inspector-docs",
+                        "analytics"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Analytics"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve User",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/user",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "user"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve User"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Cadastra_usuario",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/cadastra_usuario",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "cadastra_usuario"
+                    ],
+                    "query": []
+                },
+                "description": "Create Cadastra_usuario"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Login_usuario",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/login_usuario",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "login_usuario"
+                    ],
+                    "query": []
+                },
+                "description": "Create Login_usuario"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Teste",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/teste",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "teste"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Teste"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Soma",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/soma",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "soma"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Soma"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve {id}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/exibe_samsung/:id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "exibe_samsung",
+                        "{id}"
+                    ],
+                    "query": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "Id ID",
+                            "disabled": false
+                        }
+                    ]
+                },
+                "description": "Retrieve {id}"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Todos_samsung",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/todos_samsung",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "todos_samsung"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Todos_samsung"
+            },
+            "response": []
+        },
+        {
+            "name": "Create Salva_samsung",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/salva_samsung",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "salva_samsung"
+                    ],
+                    "query": []
+                },
+                "description": "Create Salva_samsung"
+            },
+            "response": []
+        },
+        {
+            "name": "Update Altera_loja",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/altera_loja",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "altera_loja"
+                    ],
+                    "query": []
+                },
+                "description": "Update Altera_loja"
+            },
+            "response": []
+        },
+        {
+            "name": "Delete D_samsung",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/d_samsung",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "d_samsung"
+                    ],
+                    "query": []
+                },
+                "description": "Delete D_samsung"
+            },
+            "response": []
+        },
+        {
+            "name": "Update Altera_cadastro",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "[]",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/altera_cadastro",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "altera_cadastro"
+                    ],
+                    "query": []
+                },
+                "description": "Update Altera_cadastro"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve {id}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/exibe_cadastro/:id",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "exibe_cadastro",
+                        "{id}"
+                    ],
+                    "query": [
+                        {
+                            "key": "id",
+                            "value": "1",
+                            "description": "Id ID",
+                            "disabled": false
+                        }
+                    ]
+                },
+                "description": "Retrieve {id}"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve Todos_cadastros",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/todos_cadastros",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "todos_cadastros"
+                    ],
+                    "query": []
+                },
+                "description": "Retrieve Todos_cadastros"
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Apagar_cadastro",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/apagar_cadastro",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "apagar_cadastro"
+                    ],
+                    "query": []
+                },
+                "description": "Delete Apagar_cadastro"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve {id_cadastro}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/visualiza_cadastro/:id_cadastro",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "visualiza_cadastro",
+                        "{id_cadastro}"
+                    ],
+                    "query": [
+                        {
+                            "key": "id_cadastro",
+                            "value": "1",
+                            "description": "Id_cadastro ID",
+                            "disabled": false
+                        }
+                    ]
+                },
+                "description": "Retrieve {id_cadastro}"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve {id_cadastro}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/deleta_cadastro/:id_cadastro",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "deleta_cadastro",
+                        "{id_cadastro}"
+                    ],
+                    "query": [
+                        {
+                            "key": "id_cadastro",
+                            "value": "1",
+                            "description": "Id_cadastro ID",
+                            "disabled": false
+                        }
+                    ]
+                },
+                "description": "Retrieve {id_cadastro}"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve {id_loja}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/mostra_loja/:id_loja",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "mostra_loja",
+                        "{id_loja}"
+                    ],
+                    "query": [
+                        {
+                            "key": "id_loja",
+                            "value": "1",
+                            "description": "Id_loja ID",
+                            "disabled": false
+                        }
+                    ]
+                },
+                "description": "Retrieve {id_loja}"
+            },
+            "response": []
+        },
+        {
+            "name": "Retrieve {id_loja}",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Accept",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": null,
+                "url": {
+                    "raw": "{{base_url}}/api/deleta_samsung/:id_loja",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "deleta_samsung",
+                        "{id_loja}"
+                    ],
+                    "query": [
+                        {
+                            "key": "id_loja",
+                            "value": "1",
+                            "description": "Id_loja ID",
+                            "disabled": false
+                        }
+                    ]
+                },
+                "description": "Retrieve {id_loja}"
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}

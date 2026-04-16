@@ -1,22 +1,9 @@
-// public/dashboard.js
 $(document).ready(function() {
 
-    // ========== VERIFICAR LOGIN ==========
     if (sessionStorage.getItem('admin_logado') !== 'true') {
         window.location.href = '/login_admin';
         return;
     }
-
-    // ========== DATA ATUAL ==========
-    var agora = new Date();
-    var dataFormatada = agora.toLocaleDateString('pt-BR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-    $('#dataAtual').text(dataFormatada);
-    $('#printData').text('Emitido em: ' + agora.toLocaleString('pt-BR'));
 
     // ========== LOGOUT ==========
     $('#btnLogout').on('click', function() {
@@ -37,24 +24,8 @@ $(document).ready(function() {
         });
     });
 
-    // ========== BOTÃO OBTER DADOS (PDF) ==========
-    $('#btnExport').on('click', function() {
-        Swal.fire({
-            title: '<i class="fa-solid fa-file-arrow-down me-2" style="color:#6f42c1;"></i> Obter dados',
-            html: '<p style="color:#555; font-size:0.9rem;">O relatório completo será aberto para impressão.<br>Na janela que abrir, selecione <strong>"Salvar como PDF"</strong> no campo de impressora.</p>',
-            showCancelButton: true,
-            confirmButtonColor: '#6f42c1',
-            cancelButtonColor: '#aaa',
-            confirmButtonText: '<i class="fa-solid fa-print me-1"></i> Imprimir / Salvar PDF',
-            cancelButtonText: 'Cancelar'
-        }).then(function(result) {
-            if (result.isConfirmed) {
-                setTimeout(function() {
-                    window.print();
-                }, 350);
-            }
-        });
-    });
+// aqui
+
 
     // ========== VARIÁVEIS DOS GRÁFICOS ==========
     var chartModelo, chartCor, chartAno;
@@ -64,11 +35,8 @@ $(document).ready(function() {
         '#e74c3c', '#1abc9c', '#9b59b6', '#3498db',
         '#e67e22', '#34495e', '#e91e63', '#00bcd4'
     ];
-
-    // ========== FUNÇÃO CARREGAR DADOS ==========
     function carregarDados() {
 
-        // ---------- APARELHOS ----------
         $.ajax({
             url: '/api/todos_samsung',
             method: 'GET',
@@ -184,7 +152,7 @@ $(document).ready(function() {
                     }
                 });
 
-                // Tabela Aparelhos (últimos 8)
+                // (últimos 8)
                 var ultimos = lista.slice(-8).reverse();
                 var html = '';
                 if (ultimos.length === 0) {
@@ -207,7 +175,8 @@ $(document).ready(function() {
             }
         });
 
-        // ---------- USUÁRIOS ----------
+        // Outra coisa
+        
         var token = null;
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {

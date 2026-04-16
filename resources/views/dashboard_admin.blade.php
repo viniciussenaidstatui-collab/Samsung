@@ -1,4 +1,3 @@
-{{-- resources/views/dashboard_admin.blade.php --}}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -53,9 +52,9 @@
         <div class="topbar-right">
             <div class="status-dot"></div>
             <span class="status-text">Sistema Online</span>
-            <button class="btn-export" id="btnExport">
-                <i class="fa-solid fa-file-arrow-down"></i> Obter dados
-            </button>
+            <a href="{{ route('processar-pdf') }}" class="btn-export" id="btnExport" style="text-decoration: none;">
+            <i class="fa-solid fa-file-arrow-down"></i> Obter dados
+            </a>
             <button class="btn-logout" id="btnLogout">
                 <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair
             </button>
@@ -127,7 +126,7 @@
             </div>
         </div>
         
-        <!-- Tabelas -->
+        <!-- tabelas -->
         <div class="table-card">
             <div class="chart-header">
                 <div class="chart-title">Últimos Aparelhos</div>

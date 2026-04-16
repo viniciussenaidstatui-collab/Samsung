@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\SamsungPdf;
 
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
@@ -32,6 +33,8 @@ Route::get('/dashboard_admin', function () {
 Route::get('/login', function () {
     return view('login');
 });
+
+Route::get("/processar-pdf", [SamsungPdf::class, "generate"])->name("processar-pdf");
 
 Route::get('/visualiza_loja/{id_loja}',[TestController::class,'visualiza_samsung']);
 Route::get('/altera_loja/{id_loja}',[TestController::class,'mostra_loja']);
