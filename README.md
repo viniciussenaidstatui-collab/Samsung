@@ -83,38 +83,38 @@ O projeto Laravel fornece uma API REST consumida pelo aplicativo mobile.
 ## 📂 Estrutura do projeto
 
 PROJETO-LARAVEL/
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   ├── AuthController.php
-│   │   │   └── UsuarioController.php
-│   │   └── Middleware/
-│   ├── Models/
-│   │   └── User.php
-├── bootstrap/
-├── config/
-├── database/
-│   ├── migrations/
-│   └── seeders/
-├── public/
-├── resources/
-├── routes/
-│   ├── api.php
-│   └── web.php
-├── storage/
-├── tests/
-├── vendor/
-├── .editorconfig
-├── .env
-├── .gitattributes
-├── .gitignore
-├── artisan
-├── composer.json
-├── composer.lock
-├── package-lock.json
-├── phpunit.xml
-├── publiccssdashboard.css
-└── README.md
+* ├── app/
+* │   ├── Http/
+* │   │   ├── Controllers/
+* │   │   │   ├── AuthController.php
+* │   │   │   └── UsuarioController.php
+* │   │   └── Middleware/
+* │   ├── Models/
+* │   │   └── User.php
+* ├── bootstrap/
+* ├── config/
+* ├── database/
+* │   ├── migrations/
+* │   └── seeders/
+* ├── public/
+* ├── resources/
+* ├── routes/
+* │   ├── api.php
+* │   └── web.php
+* ├── storage/
+* ├── tests/
+* ├── vendor/
+* ├── .editorconfig
+* ├── .env
+* ├── .gitattributes
+* ├── .gitignore
+* ├── artisan
+* ├── composer.json
+* ├── composer.lock
+* ├── package-lock.json
+* ├── phpunit.xml
+* ├── publiccssdashboard.css
+* └── README.md
 
 ## 📄 Documentação completa
 
