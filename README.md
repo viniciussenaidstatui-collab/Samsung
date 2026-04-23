@@ -13,7 +13,7 @@ Projeto Laravel desenvolvido com API e TOKEN para autenticação e gerenciamento
 
 ## 🚀 Tecnologias utilizadas
 
-* Laravel
+* Laravel 
 * PHP
 * MySQL
 * Sanctum
