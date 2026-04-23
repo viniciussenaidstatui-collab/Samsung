@@ -1,8 +1,8 @@
-# 📱 Aplicativo Mobile → Projeto Laravel
+# Projeto Laravel
 
 ## 📌 Sobre o projeto
 
-Projeto Laravel desenvolvido como API REST para autenticação e gerenciamento de dados, consumida por um aplicativo mobile.
+Projeto Laravel desenvolvido com API e TOKEN para autenticação e gerenciamento de dados, utilizada junto com um aplicativo mobile.
 
 ## 🎯 Objetivo (MVP)
 
@@ -15,8 +15,9 @@ Projeto Laravel desenvolvido como API REST para autenticação e gerenciamento d
 
 * Laravel
 * PHP
-* MySQL/PostgreSQL
-* Sanctum (ou JWT)
+* MySQL
+* Sanctum
+* Middleware
 * Laravel Migrations e Seeders
 
 ## 📲 Funcionalidades
@@ -122,12 +123,25 @@ PROJETO-LARAVEL/
 * 🎨 Protótipo (Figma): [Kayke]
 * 📊 Jira: https://viniciussenaidstatui.atlassian.net/jira/software/projects/PS/boards/3?atlOrigin=eyJpIjoiMjgxYzE0MTE3ZDk0NGRiMTgwZjFiYjNmZjE5ZTI3NmEiLCJwIjoiaiJ9
 
+
+## 📋 Códigos de Status HTTP
+
+| Código | Descrição | Quando ocorre |
+|--------|-----------|----------------|
+| 200 | OK | Requisição bem-sucedida |
+| 201 | Created | Cadastro criado com sucesso |
+| 400 | Bad Request | Dados inválidos ou incompletos |
+| 401 | Unauthorized | Token não informado ou inválido |
+| 403 | Forbidden | Sem permissão para acessar o recurso |
+| 404 | Not Found | Recurso não encontrado |
+| 422 | Unprocessable Entity | Erro de validação dos campos |
+| 500 | Internal Server Error | Erro interno do servidor |
+
 ## 👨‍💻 Autores
 
 Vinicius Odnei Silveira
 Kayke Ryan da Silva Côrrea
 
-Laravel:
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
