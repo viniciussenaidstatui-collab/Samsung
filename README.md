@@ -49,12 +49,12 @@ cp .env.example .env
 php artisan key:generate
 
 # Configurar banco de dados no .env
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=seu_banco
-# DB_USERNAME=seu_usuario
-# DB_PASSWORD=sua_senha
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=seu_banco
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
 
 # Executar migrations
 php artisan migrate
