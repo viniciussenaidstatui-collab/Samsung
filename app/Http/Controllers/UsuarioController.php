@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\TokenUser;
 use Carbon\Carbon;
+use App\Jobs\RenovaCache;
 
 class UsuarioController extends Controller
 {
@@ -29,6 +30,9 @@ class UsuarioController extends Controller
             $usuario->genero = $request->genero;
             $usuario->senha = md5($request->senha);
             $usuario->save();
+
+            // Novo usuário cadastrado: renova o cache
+            RenovaCache::dispatch();
 
             $data = [
                 'erro' => 'n',
@@ -101,12 +105,14 @@ class UsuarioController extends Controller
             $usuario->nascimento = $request->nascimento;
             $usuario->genero = $request->genero;
             
-            // Só altera a senha se foi enviada
             if ($request->has('senha') && !empty($request->senha)) {
                 $usuario->senha = md5($request->senha);
             }
             
             $usuario->save();
+
+            // Usuário alterado: renova o cache
+            RenovaCache::dispatch();
 
             $data = [
                 'erro' => 'n',
@@ -166,6 +172,9 @@ class UsuarioController extends Controller
 
         $usuario = Usuario::find($request->id_cadastro);
         $usuario->delete();
+
+        // Usuário deletado: renova o cache
+        RenovaCache::dispatch();
 
         $data = [
             'erro' => 'n',
