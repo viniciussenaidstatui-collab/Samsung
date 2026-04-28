@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Models\TokenUser;
 use Carbon\Carbon;
 use App\Jobs\RenovaCache;
+use App\Jobs\EnviarEmail;
 
 class UsuarioController extends Controller
 {
@@ -182,5 +183,21 @@ class UsuarioController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    public function testa_email($id_usuario){
+    $usuario = Usuario::find($id_usuario);
+
+    EnviarEmail::dispatch($usuario);
+
+    $data =
+    [
+        'message' => 'Email enviado para a fila de processamento',
+        'usuario' => $usuario
+
+    ];
+
+    return response() ->json($data);
+
     }
 }

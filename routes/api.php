@@ -6,6 +6,8 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\auth_api;
 
+Route::get('/testa-email/{id_usuario}', [UsuarioController::class, 'testa_email']);
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
