@@ -120,7 +120,7 @@ PROJETO-LARAVEL/
 
 * 📘 Documentação: https://docs.google.com/document/d/11JlwIfvrFNDG6BNHn7x-YGeThVzLoPsnS0hZveca7Jo/edit?usp=sharing
 * 📬 API (Postman): https://documenter.getpostman.com/view/51856137/2sBXirkUeT
-* 🎨 Protótipo (Figma): [Kayke]
+* 🎨 Protótipo (Figma):https://www.figma.com/design/Ab2XbvV2BEeHaIqYOVGvYO/prot%C3%B3tipo?node-id=0-1&t=IYF0FUG1APXEkxVR-1
 * 📊 Jira: https://viniciussenaidstatui.atlassian.net/jira/software/projects/PS/boards/3?atlOrigin=eyJpIjoiMjgxYzE0MTE3ZDk0NGRiMTgwZjFiYjNmZjE5ZTI3NmEiLCJwIjoiaiJ9
 
 
