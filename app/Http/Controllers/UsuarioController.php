@@ -8,6 +8,7 @@ use App\Models\TokenUser;
 use Carbon\Carbon;
 use App\Jobs\RenovaCache;
 use App\Jobs\EnviarEmail;
+use Illuminate\Support\Facades\Cache;
 
 class UsuarioController extends Controller
 {
@@ -32,7 +33,9 @@ class UsuarioController extends Controller
             $usuario->senha = md5($request->senha);
             $usuario->save();
 
-            // Novo usuário cadastrado: renova o cache
+            
+            Cache::forget('todos_cadastros');
+            Cache::forget('dashboard_samsung');
             RenovaCache::dispatch();
 
             $data = [
@@ -112,7 +115,10 @@ class UsuarioController extends Controller
             
             $usuario->save();
 
-            // Usuário alterado: renova o cache
+            
+            Cache::forget('todos_cadastros');
+                        ('usuario_' . $request->id_cadastro);
+            Cache::forget('dashboard_samsung');
             RenovaCache::dispatch();
 
             $data = [
@@ -127,9 +133,12 @@ class UsuarioController extends Controller
         }
     }
 
+    
     public function exibe_cadastro($id)
     {
-        $usuario = Usuario::find($id);
+        $usuario = Cache::remember('usuario_' . $id, now()->addMinutes(10), function() use ($id) {
+            return Usuario::find($id);
+        });
 
         $data = [
             'erro' => 'n',
@@ -139,9 +148,12 @@ class UsuarioController extends Controller
         return response()->json($data, 200);
     }
 
+
     public function todos_cadastros(Request $request)
     {
-        $usuarios = Usuario::all();
+        $usuarios = Cache::rememberForever('todos_cadastros', function() {
+            return Usuario::all();
+        });
 
         $data = [
             'erro' => 'n',
@@ -154,14 +166,12 @@ class UsuarioController extends Controller
     public function visualiza_cadastro($id_cadastro)
     {
         $usuario = Usuario::find($id_cadastro);
-
         return view('perfil')->with('usuario', $usuario);
     }
 
     public function deleta_cadastro($id_cadastro)
     {
         $usuario = Usuario::find($id_cadastro);
-
         return view('deleta_cadastro')->with('usuario', $usuario);
     }
 
@@ -174,7 +184,10 @@ class UsuarioController extends Controller
         $usuario = Usuario::find($request->id_cadastro);
         $usuario->delete();
 
-        // Usuário deletado: renova o cache
+        
+        Cache::forget('todos_cadastros');
+        Cache::forget('usuario_' . $request->id_cadastro);
+        Cache::forget('dashboard_samsung');
         RenovaCache::dispatch();
 
         $data = [
@@ -186,18 +199,14 @@ class UsuarioController extends Controller
     }
 
     public function testa_email($id_usuario){
-    $usuario = Usuario::find($id_usuario);
+        $usuario = Usuario::find($id_usuario);
+        EnviarEmail::dispatch($usuario);
 
-    EnviarEmail::dispatch($usuario);
+        $data = [
+            'message' => 'Email enviado para a fila de processamento',
+            'usuario' => $usuario
+        ];
 
-    $data =
-    [
-        'message' => 'Email enviado para a fila de processamento',
-        'usuario' => $usuario
-
-    ];
-
-    return response() ->json($data);
-
+        return response()->json($data);
     }
 }

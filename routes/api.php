@@ -20,7 +20,7 @@ Route::post('/login_usuario', [UsuarioController::class, 'login_usuario']);
 Route::get('/teste', [TestController::class, 'envia_teste']);
 Route::get('/soma', [TestController::class, 'soma']);
 Route::get('/exibe_samsung/{id}', [TestController::class, 'exibe_samsung']);
-Route::get('/todos_samsung', [TestController::class, 'todos_samsung']);
+Route::post('/todos_samsung', [TestController::class, 'todos_samsung']);
 
 // Rotas que precisam de autenticação (token)
 Route::middleware([auth_api::class])->group(function() {

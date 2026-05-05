@@ -5,23 +5,22 @@ namespace App\Jobs;
 use App\Models\Usuario;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use app\Mail\BemVindoMail;
+use App\Mail\BemVindoMail;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
+
 class EnviarEmail implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public Usuario $Usuario;
+    public Usuario $usuario; // Mudado para minúsculo
 
     /**
      * Create a new job instance.
      */
-    
-
-    public function __construct(Usuario $Usuario)
+    public function __construct(Usuario $usuario) // Mudado para minúsculo
     {
-        $this->Usuario = $Usuario;
+        $this->usuario = $usuario; // Corrigido
     }
 
     /**
@@ -29,6 +28,6 @@ class EnviarEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->Usuario->email)->send(new BemVindoMail($this->Usuario));
+        Mail::to($this->usuario->email)->send(new BemVindoMail($this->usuario));
     }
 }

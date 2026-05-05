@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -15,15 +14,11 @@ class BemVindoMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public Usuario $Usuario;
-    /**
-     * Create a new message instance.
-     */
-    
-    
-    public function __construct(Usuario $Usuario)
+    public Usuario $usuario; // Mudado para minúsculo (padrão Laravel)
+  
+    public function __construct(Usuario $usuario) // Mudado para minúsculo
     {
-        $this -> Usuario = $Usuario;
+        $this->usuario = $usuario; // Corrigido espaços e case
     }
 
     /**
@@ -32,7 +27,7 @@ class BemVindoMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Bem Vindo Samsung'. $this ->Usuario->nome,
+            subject: 'Bem Vindo Samsung - ' . $this->usuario->nome, // Corrigido: $this->usuario
         );
     }
 
@@ -43,8 +38,8 @@ class BemVindoMail extends Mailable
     {
         return new Content(
             view: 'email.bemvindo',
-            with:[
-                'Usuario' => $this->Usuario
+            with: [
+                'usuario' => $this->usuario // Mudado para minúsculo para corresponder à view
             ]
         );
     }

@@ -114,28 +114,32 @@
             font-size: 0.85rem;
         }
 
-        .status-dot {
-            height: 10px;
-            width: 10px;
-            background-color: #2ecc71;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
         .breadcrumb-custom {
             background-color: white;
             padding: 12px 20px;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(111, 66, 193, 0.05);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
         }
     </style>
 </head>
@@ -241,17 +245,11 @@
                             </tr>
                         </thead>
                         <tbody id="tabelaCorpo">
-                            <!-- Dados serão inseridos via JavaScript -->
                             <tr>
                                 <td colspan="6" class="text-center py-4">Carregando produtos...</td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-
-                <div id="loader" class="text-center py-5 d-none">
-                    <div class="spinner-grow text-primary loader-spinner" role="status"></div>
-                    <p class="mt-2 text-muted small">Carregando produtos...</p>
                 </div>
             </div>
         </div>
@@ -273,75 +271,103 @@ function atualizarData() {
     document.getElementById('dataAtual').textContent = data.toLocaleDateString('pt-BR', options);
 }
 
-// FUNÇÃO PARA CARREGAR PRODUTOS (FORA DO DOCUMENT.READY)
-async function carregarProdutos() {
+// FUNÇÃO CORRIGIDA PARA CARREGAR PRODUTOS (USANDO POST COM TOKEN)
+function carregarProdutos() {
     console.log("=== CARREGANDO PRODUTOS ===");
     
     const tabela = document.getElementById('tabelaCorpo');
-    const loader = document.getElementById('loader');
+    const contador = document.getElementById('contadorItens');
+    let token = $.cookie('token');
     
-    if (!tabela) {
-        console.error("Elemento tabelaCorpo não encontrado!");
+    if (!token) {
+        console.error("Token não encontrado no cookie!");
+        tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Sessão expirada. Faça login novamente.</td></tr>';
         return;
     }
     
+    console.log("Token encontrado:", token.substring(0, 20) + "...");
+    
+    // Mostrar loading
     tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div> Carregando...</td></tr>';
     
-    try {
-        const response = await fetch('/api/todos_samsung');
-        const data = await response.json();
-        
-        console.log("Dados recebidos:", data);
-        
-        if (data.erro === 'n' && data.samsung && data.samsung.length > 0) {
-            // Atualizar contador
-            document.getElementById('contadorItens').textContent = data.samsung.length;
+    // Usando POST como a API espera
+    $.ajax({
+        url: "/api/todos_samsung",
+        method: "POST",
+        data: { token: token },
+        dataType: "json",
+        success: function(data) {
+            console.log("Dados recebidos:", data);
             
-            let html = '';
-            data.samsung.forEach(item => {
-                html += `
-                    <tr>
-                        <td><span class="badge-id">#${item.id}</span></td>
-                        <td class="fw-bold">${item.aparelho}</td>
-                        <td>${item.modelo}</td>
-                        <td>${item.cor}</td>
-                        <td>${item.ano}</td>
-                        <td>
-                            <div class="d-flex gap-1">
-                                <a href="/altera_loja/${item.id}" class="btn btn-sm btn-outline-primary" title="Editar">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                <a href="/deleta_samsung/${item.id}" class="btn btn-sm btn-outline-danger" title="Deletar" onclick="return confirm('Tem certeza?')">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+            if (data.erro === 'n' && data.samsung && data.samsung.length > 0) {
+                contador.textContent = data.samsung.length;
+                
+                let html = '';
+                data.samsung.forEach(item => {
+                    html += `
+                        <tr>
+                            <td><span class="badge-id">#${item.id}</span></td>
+                            <td class="fw-bold">${item.aparelho}</td>
+                            <td>${item.modelo}</td>
+                            <td>${item.cor}</td>
+                            <td>${item.ano}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="/altera_samsung/${item.id}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="/deleta_samsung/${item.id}" class="btn btn-sm btn-outline-danger" title="Deletar" onclick="return confirm('Tem certeza?')">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tabela.innerHTML = html;
+            } else {
+                tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhum produto cadastrado.</td></tr>';
+                contador.textContent = '0';
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro ao carregar produtos:", {
+                status: xhr.status,
+                response: xhr.responseText
             });
             
-            tabela.innerHTML = html;
-        } else {
-            tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhum produto cadastrado.</td></tr>';
-            document.getElementById('contadorItens').textContent = '0';
+            let mensagem = "Erro ao carregar produtos. ";
+            if (xhr.status === 401) {
+                mensagem = "Token inválido. Faça login novamente.";
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            }
+            
+            tabela.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">${mensagem}</td></tr>`;
+            contador.textContent = '0';
         }
-    } catch (error) {
-        console.error("Erro ao carregar produtos:", error);
-        tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Erro ao carregar produtos.</td></tr>';
-    }
+    });
 }
 
-// FUNÇÃO PARA VERIFICAR TOKEN E CONFIGURAR LOGOUT
+// FUNÇÃO PARA VERIFICAR TOKEN
 function verificarToken() {
     let token = $.cookie('token');
     
     if (!token) {
-        alert("Você precisa estar logado!");
-        window.location.href = '/login';
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sessão expirada',
+            text: 'Você precisa estar logado para acessar esta página.',
+            confirmButtonColor: '#6f42c1'
+        }).then(() => {
+            window.location.href = '/login';
+        });
         return false;
     }
     
-    console.log("Token OK:", token.substring(0, 15) + "...");
+    console.log("Token OK:", token.substring(0, 20) + "...");
     return token;
 }
 
@@ -366,27 +392,57 @@ $(document).ready(function() {
         
         let tokenAtual = $.cookie('token');
         if (!tokenAtual) {
-            alert("Sessão expirada! Faça login novamente.");
-            window.location.href = '/login';
+            Swal.fire({
+                icon: 'error',
+                title: 'Sessão expirada',
+                text: 'Faça login novamente.',
+                confirmButtonColor: '#6f42c1'
+            }).then(() => {
+                window.location.href = '/login';
+            });
             return;
         }
         
         // Validar campos
-        if ($("#cor").val() === "" || $("#ano").val() === "" || 
-            $("#modelo").val() === "" || $("#aparelho").val() === "") {
-            alert("Preencha todos os campos!");
+        let aparelho = $("#aparelho").val().trim();
+        let modelo = $("#modelo").val().trim();
+        let cor = $("#cor").val().trim();
+        let ano = $("#ano").val().trim();
+        
+        if (!aparelho || !modelo || !cor || !ano) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'Preencha todos os campos!',
+                confirmButtonColor: '#6f42c1'
+            });
+            return;
+        }
+        
+        if (isNaN(ano) || ano < 2000 || ano > new Date().getFullYear() + 1) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ano inválido',
+                text: 'Por favor, insira um ano válido (2000-' + (new Date().getFullYear() + 1) + ')',
+                confirmButtonColor: '#6f42c1'
+            });
             return;
         }
         
         let dados = {
-            cor: $("#cor").val(),
-            ano: $("#ano").val(),
-            modelo: $("#modelo").val(),
-            aparelho: $("#aparelho").val(),
+            aparelho: aparelho,
+            modelo: modelo,
+            cor: cor,
+            ano: parseInt(ano),
             token: tokenAtual
         };
         
         console.log("Enviando dados:", dados);
+        
+        // Mostrar loading no botão
+        let $btn = $(this);
+        let textoOriginal = $btn.html();
+        $btn.html('<i class="fa-solid fa-spinner fa-spin me-2"></i> SALVANDO...').prop('disabled', true);
         
         $.ajax({
             url: "/api/salva_samsung",
@@ -396,20 +452,50 @@ $(document).ready(function() {
                 console.log("Resposta:", res);
                 
                 if(res['erro'] == 'n') {
-                    alert("Produto cadastrado com sucesso!");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: 'Produto cadastrado com sucesso!',
+                        confirmButtonColor: '#6f42c1',
+                        timer: 2000
+                    });
                     
                     // Limpar campos
-                    $("#cor, #ano, #modelo, #aparelho").val("");
+                    $("#aparelho, #modelo, #cor, #ano").val("");
                     
-                    // RECARREGAR A TABELA
+                    // Recarregar tabela
                     carregarProdutos();
                 } else {
-                    alert("Erro: " + (res['msg'] || 'Erro desconhecido'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: res['msg'] || 'Erro desconhecido',
+                        confirmButtonColor: '#6f42c1'
+                    });
                 }
             },
             error: function(xhr) {
                 console.error("Erro AJAX:", xhr);
-                alert("Erro ao conectar com o servidor. Status: " + xhr.status);
+                let mensagem = "Erro ao conectar com o servidor.";
+                
+                if (xhr.status === 401) {
+                    mensagem = "Token inválido. Faça login novamente.";
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else if (xhr.responseJSON && xhr.responseJSON.msg) {
+                    mensagem = xhr.responseJSON.msg;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: mensagem,
+                    confirmButtonColor: '#6f42c1'
+                });
+            },
+            complete: function() {
+                $btn.html(textoOriginal).prop('disabled', false);
             }
         });
     });
@@ -418,10 +504,21 @@ $(document).ready(function() {
     $("#btnLogoutNav").click(function(e) {
         e.preventDefault();
         
-        if (confirm("Deseja realmente sair?")) {
-            $.removeCookie('token', { path: '/' });
-            window.location.href = '/login';
-        }
+        Swal.fire({
+            title: 'Deseja sair?',
+            text: "Você será redirecionado para a página de login.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#6f42c1',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, sair',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.removeCookie('token', { path: '/' });
+                window.location.href = '/login';
+            }
+        });
     });
 });
 </script>
