@@ -172,6 +172,8 @@ class TestController extends Controller
             'samsung' => $samsung
         ];
 
+        return response()->json($data, 200);
+
         } catch(\Throwable $th) {
             throw $th;
         }

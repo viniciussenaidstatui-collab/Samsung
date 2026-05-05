@@ -1,18 +1,35 @@
 <?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\Usuario;
-use App\Models\SamsungModel;
+ 
+namespace App\Jobs;
+ 
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Cache;
-
-class SamsungPdf extends Controller
+use App\Models\SamsungModel;
+use App\Models\Usuario;
+ 
+class RenovaCache implements ShouldQueue
 {
-    public function generate(){
-
-        $data = Cache::rememberForever('dashboard_samsung', function() {
+    use Queueable;
+ 
+    /**
+     * Create a new job instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+ 
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        // Apaga o cache antigo
+        Cache::forget('dashboard_samsung');
+ 
+        // Recria o cache com dados frescos
+        Cache::rememberForever('dashboard_samsung', function() {
             $data = [];
             $data['totalAparelhos'] = SamsungModel::count();
             $data['totalContas']    = Usuario::count();
@@ -23,9 +40,5 @@ class SamsungPdf extends Controller
             $data['name']           = 'Vinicius Silveira';
             return $data;
         });
-
-        $pdf = Pdf::loadView('PdfDashBoard', $data);
-
-        return $pdf->download("Dashboard.pdf");
     }
 }
