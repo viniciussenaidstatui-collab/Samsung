@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Jobs\RenovaCache;
 use App\Jobs\EnviarEmail;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\AutenticaJob;
 
 class UsuarioController extends Controller
 {
@@ -62,6 +63,19 @@ class UsuarioController extends Controller
             ->first();
 
         if ($usuario) {
+
+
+            if($usuario->dupla_autentica == "1"){
+                AutenticaJob::dispatch($usuario);
+                $data = [
+                    'erro' => 'n',
+                    'msg' => 'autentica_ativa', 
+
+                ];
+
+                return response()->json($data, 200);
+
+            }
             TokenUser::where('user_id', $usuario->id)->delete();
             
             $token = new TokenUser();
@@ -88,6 +102,20 @@ class UsuarioController extends Controller
 
             return response()->json($data, 200);
         }
+    }
+
+    public function digita_codigo(Request $request){
+
+        return view('digita_codigo');
+
+    }
+
+    public function enviar_codigo(Request $request){
+
+    $request->validate([
+        'email' => 'required',
+        'codigo' => 'required'
+    ]);
     }
 
     public function altera_cadastro(Request $request)
