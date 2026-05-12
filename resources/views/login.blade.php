@@ -127,7 +127,6 @@ $(document).ready(function() {
             },
             success: function(response) {
                 if (response['erro'] == 'n' && response['msg'] == 'Usuário Logado') {
-                    // Salva o token no cookie por 7 dias
                     $.cookie('token', response['token'], { expires: 7, path: '/' });
                     
                     Swal.fire({
@@ -142,11 +141,13 @@ $(document).ready(function() {
                         window.location.href = "/inicio";
                     }, 2000);
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Falha no Login',
-                        text: response['msg'] || 'Credenciais incorretas.'
-                    });
+                    
+                    if (response['msg'] == 'autentica_ativa') {
+                        alert("Autenticação de dois fatores ativa, por favor digite o codigo");
+                        setTimeout(function() {
+                            window.location.href = "/digita_codigo";
+                        }, 2000);
+                    }
                 }
             },
             error: function(xhr) {

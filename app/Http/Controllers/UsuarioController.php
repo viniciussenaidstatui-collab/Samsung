@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CodigoEmail;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\TokenUser;
@@ -116,6 +117,39 @@ class UsuarioController extends Controller
         'email' => 'required',
         'codigo' => 'required'
     ]);
+
+    $codigo = CodigoEmail::where('email', $request->email)
+        ->where('codigo','=' ,$request->codigo)
+        ->where('valido_ate', '>', Carbon::now())->get()->first();
+
+        if($codigo){
+            $usuario = Usuario::where('email', $request->email)->get()->first();
+            TokenUser::where('user_id', $usuario->id)->delete();
+            $token = new TokenUser();
+            $token->user_id = $usuario->id;
+            $data = date("Y-m-d H:i:s");
+            $token->token = md5($usuario->id . $usuario->email . $data);
+            $agora = Carbon::now();
+            $agora->addDays(7);
+            $token->valido_ate = $agora;
+            $token->save();
+
+            CodigoEmail::where('email','=', $request->email)->delete();
+
+            $data = [
+                'erro' => 'n',
+                'msg' => 'Código correto! Usuário autenticado.',
+                'token' => $token->token
+            ];
+            return response()->json($data, 200);
+        
+        
+        
+            }
+        
+
+
+
     }
 
     public function altera_cadastro(Request $request)

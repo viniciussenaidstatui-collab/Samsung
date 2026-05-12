@@ -13,17 +13,14 @@ $(document).ready(function(){
             success: function (response) {
 
                 if(response.erro == "n"){
-                    window.location.href = "/inicio";
-
+                    
                     $.cookie('token', response['token'], { expires: 7, path: '/' });
+                    alert("Código correto! Redirecionando para a página inicial...");
                     
                     setTimeout(function() {
                         window.location.href = "/inicio";
                     }, 2000);
-                } else {
-                    
-                }
-
+                } 
 
             }
 

@@ -8,6 +8,8 @@ use App\Http\Middleware\auth_api;
 
 Route::get('/testa-email/{id_usuario}', [UsuarioController::class, 'testa_email']);
 
+Route::get('/enviar_codigo', [UsuarioController::class, 'enviar_codigo']);
+
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });

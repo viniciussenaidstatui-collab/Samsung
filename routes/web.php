@@ -8,6 +8,10 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+Route::get('/digita_codigo', function () {
+    return view('digita_codigo');
+})->name('digita_codigo');
+
 require __DIR__.'/auth.php';
 
 Route::get('/index', function () {
