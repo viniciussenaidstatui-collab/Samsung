@@ -7,6 +7,9 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\auth_api;
 
 Route::get('/testa-email/{id_usuario}', [UsuarioController::class, 'testa_email']);
+// Adicione no final do arquivo, antes do fechamento
+Route::post('/ativar_2fa', [UsuarioController::class, 'ativar_2fa']);
+Route::post('/confirmar_ativar_2fa', [UsuarioController::class, 'confirmar_ativar_2fa']);
 
 Route::get('/enviar_codigo', [UsuarioController::class, 'enviar_codigo']);
 

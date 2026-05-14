@@ -26,6 +26,7 @@
             align-items: center;
             justify-content: center;
             margin: 0;
+            padding: 20px;
         }
 
         .auth-card {
@@ -54,6 +55,11 @@
             border: 1px solid #e0e0e0;
         }
 
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+            border-color: var(--primary-purple);
+        }
+
         .btn-auth {
             background: var(--primary-purple);
             color: white;
@@ -68,6 +74,59 @@
         .btn-auth:hover {
             background: var(--dark-purple);
             transform: translateY(-2px);
+        }
+
+        .btn-2fa {
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .btn-2fa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-2fa i {
+            margin-right: 8px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            color: #6c757d;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -96,11 +155,18 @@
             <i class="fa-solid fa-right-to-bracket me-2"></i>Entrar no Portal
         </button>
 
+        <div class="divider">
+            <span>ou</span>
+        </div>
+        
+        <button type="button" id="btnAtivar2FA" class="btn-2fa">
+            <i class="fa-solid fa-shield-haltered"></i>
+            Ativar Autenticação de Dois Fatores
+        </button>
+
         <div class="text-center mt-4">
             <p class="small">Não tem conta? <a href="/cadastro" class="text-decoration-none fw-bold" style="color: var(--primary-purple);">Cadastre-se</a></p>
-
             <p class="small text-muted">Administrador? <a href="/login_admin" class="text-decoration-none fw-bold" style="color: var(--dark-purple);">Vá por aqui</a></p>
-</div>
         </div>
     </form>
 </div>
@@ -108,7 +174,6 @@
 <script>
 $(document).ready(function() {
     $("#btnLogin").click(function() {
-        // Validação básica
         if ($("#email").val() === "" || $("#senha").val() === "") {
             Swal.fire({
                 icon: 'warning',
@@ -141,21 +206,30 @@ $(document).ready(function() {
                         window.location.href = "/inicio";
                     }, 2000);
                 } else {
-                    
                     if (response['msg'] == 'autentica_ativa') {
+                        // Salvar email na sessão via localStorage
+                        localStorage.setItem('email_2fa', $("#email").val());
+                        
                         Swal.fire({
                             icon: 'info',
                             title: 'Autenticação de dois fatores',
-                            text: 'Autenticação de dois fatores ativa, por favor digite o código.'
+                            text: 'Digite o código enviado para seu e-mail',
+                            confirmButtonText: 'OK'
                         });
+                        
                         setTimeout(function() {
                             window.location.href = "/digita_codigo";
-                        }, 2000);
+                        }, 1500);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro no login',
+                            text: response['msg'] || 'Email ou senha inválidos.'
+                        });
                     }
                 }
             },
             error: function(xhr) {
-                console.log("Erro ao fazer login:", xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro de conexão',
@@ -165,9 +239,106 @@ $(document).ready(function() {
         });
     });
 
-    // Permitir login ao pressionar Enter no formulário
+    // Botão para ATIVAR 2FA
+    $("#btnAtivar2FA").click(function() {
+        const email = $("#email").val();
+        
+        if (!email) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'E-mail necessário',
+                text: 'Digite seu e-mail para ativar a autenticação de dois fatores.'
+            });
+            return;
+        }
+
+        // Primeiro passo: gerar código
+        $.ajax({
+            url: "/api/ativar_2fa",
+            method: "POST",
+            data: { email: email },
+            success: function(response) {
+                if (response.erro == 'n') {
+                    // Mostrar código para debug (você verá no console)
+                    console.log('Código gerado:', response.codigo);
+                    
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Código gerado!',
+                        html: `
+                            
+                           
+                            
+                            <hr>
+                            <input type="text" id="codigoConfirmacao" class="form-control mt-3" placeholder="Digite o código aqui" maxlength="6">
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Confirmar e Ativar',
+                        cancelButtonText: 'Cancelar',
+                        preConfirm: () => {
+                            const codigo = document.getElementById('codigoConfirmacao').value;
+                            if (!codigo || codigo.length !== 6) {
+                                Swal.showValidationMessage('Digite o código de 6 dígitos');
+                                return false;
+                            }
+                            return { codigo: codigo };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Confirmar código e ativar 2FA
+                            $.ajax({
+                                url: "/api/confirmar_ativar_2fa",
+                                method: "POST",
+                                data: {
+                                    email: email,
+                                    codigo: result.value.codigo
+                                },
+                                success: function(confirmResponse) {
+                                    if (confirmResponse.erro == 'n') {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '2FA Ativado!',
+                                            text: 'Autenticação de dois fatores ativada com sucesso!',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Erro',
+                                            text: confirmResponse.msg
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Erro',
+                                        text: 'Não foi possível confirmar o código.'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: response.msg
+                    });
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Erro ao gerar código. Verifique o console.'
+                });
+            }
+        });
+    });
+
     $("#formLogin").on('keypress', function(e) {
-        if (e.which === 13) { // Tecla Enter
+        if (e.which === 13) {
             $("#btnLogin").click();
         }
     });

@@ -69,7 +69,7 @@ class UsuarioController extends Controller
             if($usuario->dupla_autentica == "1"){
                 AutenticaJob::dispatch($usuario);
                 $data = [
-                    'erro' => 's',
+                    'erro' => 'n',
                     'msg' => 'autentica_ativa', 
 
                 ];
@@ -271,4 +271,105 @@ class UsuarioController extends Controller
 
         return response()->json($data);
     }
+
+    // Adicione estes métodos ao final do seu UsuarioController.php
+
+public function ativar_2fa(Request $request)
+{
+    try {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $usuario = Usuario::where('email', $request->email)->first();
+
+        if (!$usuario) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'E-mail não encontrado'
+            ]);
+        }
+
+        if ($usuario->dupla_autentica == "1") {
+            return response()->json([
+                'erro' => 's',
+                'msg' => '2FA já está ativo para esta conta'
+            ]);
+        }
+
+        // Gerar código diretamente (sem fila)
+        $codigo = rand(100000, 999999);
+        $valido_ate = Carbon::now()->addMinutes(10);
+
+        // Salvar código no banco
+        CodigoEmail::updateOrCreate(
+            ['email' => $request->email],
+            [
+                'codigo' => $codigo,
+                'valido_ate' => $valido_ate
+            ]
+        );
+
+        // Salvar o email na sessão para usar depois
+        session(['email_ativar_2fa' => $request->email]);
+        session(['codigo_2fa' => $codigo]);
+
+        return response()->json([
+            'erro' => 'n',
+            'msg' => 'Código gerado! Verifique no banco de dados.',
+            'codigo' => $codigo // Mostra o código no console do navegador
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'erro' => 's',
+            'msg' => 'Erro: ' . $e->getMessage()
+        ]);
+    }
+}
+
+public function confirmar_ativar_2fa(Request $request)
+{
+    try {
+        $request->validate([
+            'email' => 'required|email',
+            'codigo' => 'required|string|size:6'
+        ]);
+
+        $codigoValido = CodigoEmail::where('email', $request->email)
+            ->where('codigo', $request->codigo)
+            ->where('valido_ate', '>', Carbon::now())
+            ->first();
+
+        if (!$codigoValido) {
+            return response()->json([
+                'erro' => 's',
+                'msg' => 'Código inválido ou expirado. Gere um novo código.'
+            ]);
+        }
+
+        // Ativar 2FA
+        $usuario = Usuario::where('email', $request->email)->first();
+        $usuario->dupla_autentica = "1";
+        $usuario->save();
+
+        // Limpar código usado
+        CodigoEmail::where('email', $request->email)->delete();
+        
+        // Limpar sessão
+        session()->forget(['email_ativar_2fa', 'codigo_2fa']);
+
+        return response()->json([
+            'erro' => 'n',
+            'msg' => '2FA ativado com sucesso!'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'erro' => 's',
+            'msg' => 'Erro: ' . $e->getMessage()
+        ]);
+    }
+}
+
 }
