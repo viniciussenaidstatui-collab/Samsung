@@ -69,7 +69,7 @@ class UsuarioController extends Controller
             if($usuario->dupla_autentica == "1"){
                 AutenticaJob::dispatch($usuario);
                 $data = [
-                    'erro' => 'n',
+                    'erro' => 's',
                     'msg' => 'autentica_ativa', 
 
                 ];

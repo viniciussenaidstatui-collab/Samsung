@@ -143,7 +143,11 @@ $(document).ready(function() {
                 } else {
                     
                     if (response['msg'] == 'autentica_ativa') {
-                        alert("Autenticação de dois fatores ativa, por favor digite o codigo");
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Autenticação de dois fatores',
+                            text: 'Autenticação de dois fatores ativa, por favor digite o código.'
+                        });
                         setTimeout(function() {
                             window.location.href = "/digita_codigo";
                         }, 2000);
