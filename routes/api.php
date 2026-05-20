@@ -10,6 +10,8 @@ Route::get('/testa-email/{id_usuario}', [UsuarioController::class, 'testa_email'
 // Adicione no final do arquivo, antes do fechamento
 Route::post('/ativar_2fa', [UsuarioController::class, 'ativar_2fa']);
 Route::post('/confirmar_ativar_2fa', [UsuarioController::class, 'confirmar_ativar_2fa']);
+Route::post('/solicitar_recuperacao', [UsuarioController::class, 'solicitar_recuperacao']);
+Route::post('/confirmar_recuperacao', [UsuarioController::class, 'confirmar_recuperacao']);
 
 Route::get('/enviar_codigo', [UsuarioController::class, 'enviar_codigo']);
 

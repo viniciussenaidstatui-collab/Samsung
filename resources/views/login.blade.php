@@ -98,6 +98,24 @@
             margin-right: 8px;
         }
 
+        /* Botão Esqueci a Senha */
+        .btn-esqueci {
+            background: none;
+            border: none;
+            color: var(--primary-purple);
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 0;
+            cursor: pointer;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .btn-esqueci:hover {
+            color: var(--dark-purple);
+            text-decoration: underline;
+        }
+
         .divider {
             text-align: center;
             margin: 20px 0;
@@ -114,13 +132,8 @@
             background: #dee2e6;
         }
 
-        .divider::before {
-            left: 0;
-        }
-
-        .divider::after {
-            right: 0;
-        }
+        .divider::before { left: 0; }
+        .divider::after  { right: 0; }
 
         .divider span {
             background: white;
@@ -146,9 +159,16 @@
             <input type="email" id="email" class="form-control" placeholder="nome@samsung.com" required>
         </div>
 
-        <div class="mb-4">
+        <div class="mb-1">
             <label class="form-label fw-bold small">Senha</label>
             <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <!-- Link Esqueci a Senha -->
+        <div class="text-end mb-4">
+            <button type="button" class="btn-esqueci" id="btnEsqueciSenha">
+                <i class="fa-solid fa-key me-1" style="font-size: 0.75rem;"></i>Esqueci minha senha
+            </button>
         </div>
 
         <button type="button" id="btnLogin" class="btn btn-auth">
@@ -173,6 +193,10 @@
 
 <script>
 $(document).ready(function() {
+
+    // ──────────────────────────────────────────
+    // LOGIN
+    // ──────────────────────────────────────────
     $("#btnLogin").click(function() {
         if ($("#email").val() === "" || $("#senha").val() === "") {
             Swal.fire({
@@ -207,7 +231,6 @@ $(document).ready(function() {
                     }, 2000);
                 } else {
                     if (response['msg'] == 'autentica_ativa') {
-                        // Salvar email na sessão via localStorage
                         localStorage.setItem('email_2fa', $("#email").val());
                         
                         Swal.fire({
@@ -229,7 +252,7 @@ $(document).ready(function() {
                     }
                 }
             },
-            error: function(xhr) {
+            error: function() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro de conexão',
@@ -239,7 +262,134 @@ $(document).ready(function() {
         });
     });
 
-    // Botão para ATIVAR 2FA
+    // ──────────────────────────────────────────
+    // ESQUECI A SENHA — Etapa 1: solicitar código
+    // ──────────────────────────────────────────
+    $("#btnEsqueciSenha").click(function() {
+        const emailDigitado = $("#email").val();
+
+        Swal.fire({
+            icon: 'info',
+            title: 'Recuperar senha',
+            html: `
+                <p class="text-muted small mb-3">Digite seu e-mail para receber o código de recuperação.</p>
+                <input type="email" id="emailRecupera" class="swal2-input" 
+                       placeholder="seu@email.com" value="${emailDigitado}">
+            `,
+            confirmButtonText: 'Enviar código',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                const email = document.getElementById('emailRecupera').value;
+                if (!email) {
+                    Swal.showValidationMessage('Informe um e-mail válido');
+                    return false;
+                }
+                return email;
+            }
+        }).then((result) => {
+            if (!result.isConfirmed) return;
+
+            const email = result.value;
+
+            // Chama o endpoint de solicitar recuperação
+            $.ajax({
+                url: "/api/solicitar_recuperacao",
+                method: "POST",
+                data: { email: email },
+                success: function(response) {
+                    if (response.erro == 'n') {
+                        // Etapa 2: digitar código + nova senha
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Código enviado!',
+                            html: `
+                                <p class="text-muted small mb-3">Verifique seu e-mail e preencha os campos abaixo.</p>
+                                <input type="text" id="codigoRecupera" class="swal2-input" 
+                                       placeholder="Código de 6 dígitos" maxlength="6">
+                                <input type="password" id="novaSenha" class="swal2-input mt-2" 
+                                       placeholder="Nova senha">
+                                <input type="password" id="confirmaSenha" class="swal2-input mt-2" 
+                                       placeholder="Confirme a nova senha">
+                            `,
+                            confirmButtonText: 'Redefinir senha',
+                            showCancelButton: true,
+                            cancelButtonText: 'Cancelar',
+                            preConfirm: () => {
+                                const codigo    = document.getElementById('codigoRecupera').value;
+                                const novaSenha = document.getElementById('novaSenha').value;
+                                const confirma  = document.getElementById('confirmaSenha').value;
+
+                                if (!codigo || codigo.length !== 6) {
+                                    Swal.showValidationMessage('O código deve ter 6 dígitos');
+                                    return false;
+                                }
+                                if (!novaSenha || novaSenha.length < 6) {
+                                    Swal.showValidationMessage('A senha deve ter no mínimo 6 caracteres');
+                                    return false;
+                                }
+                                if (novaSenha !== confirma) {
+                                    Swal.showValidationMessage('As senhas não coincidem');
+                                    return false;
+                                }
+                                return { codigo, novaSenha };
+                            }
+                        }).then((etapa2) => {
+                            if (!etapa2.isConfirmed) return;
+
+                            // Etapa 3: confirmar código e salvar nova senha
+                            $.ajax({
+                                url: "/api/confirmar_recuperacao",
+                                method: "POST",
+                                data: {
+                                    email:      email,
+                                    codigo:     etapa2.value.codigo,
+                                    nova_senha: etapa2.value.novaSenha
+                                },
+                                success: function(res) {
+                                    if (res.erro == 'n') {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Senha redefinida!',
+                                            text: 'Sua senha foi alterada com sucesso. Faça login.',
+                                            confirmButtonText: 'OK'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Erro',
+                                            text: res.msg || 'Código inválido ou expirado.'
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Erro',
+                                        text: 'Não foi possível redefinir a senha.'
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: response.msg || 'E-mail não encontrado.'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    const msg = xhr.responseJSON?.msg || 'E-mail não encontrado.';
+                    Swal.fire({ icon: 'error', title: 'Erro', text: msg });
+                }
+            });
+        });
+    });
+
+    // ──────────────────────────────────────────
+    // ATIVAR 2FA
+    // ──────────────────────────────────────────
     $("#btnAtivar2FA").click(function() {
         const email = $("#email").val();
         
@@ -252,25 +402,20 @@ $(document).ready(function() {
             return;
         }
 
-        // Primeiro passo: gerar código
         $.ajax({
             url: "/api/ativar_2fa",
             method: "POST",
             data: { email: email },
             success: function(response) {
                 if (response.erro == 'n') {
-                    // Mostrar código para debug (você verá no console)
                     console.log('Código gerado:', response.codigo);
                     
                     Swal.fire({
                         icon: 'info',
                         title: 'Código gerado!',
                         html: `
-                            
-                           
-                            
                             <hr>
-                            <input type="text" id="codigoConfirmacao" class="form-control mt-3" placeholder="Digite o código aqui" maxlength="6">
+                            <input type="text" id="codigoConfirmacao" class="swal2-input mt-3" placeholder="Digite o código aqui" maxlength="6">
                         `,
                         showCancelButton: true,
                         confirmButtonText: 'Confirmar e Ativar',
@@ -285,14 +430,10 @@ $(document).ready(function() {
                         }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Confirmar código e ativar 2FA
                             $.ajax({
                                 url: "/api/confirmar_ativar_2fa",
                                 method: "POST",
-                                data: {
-                                    email: email,
-                                    codigo: result.value.codigo
-                                },
+                                data: { email: email, codigo: result.value.codigo },
                                 success: function(confirmResponse) {
                                     if (confirmResponse.erro == 'n') {
                                         Swal.fire({
@@ -302,41 +443,26 @@ $(document).ready(function() {
                                             confirmButtonText: 'OK'
                                         });
                                     } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Erro',
-                                            text: confirmResponse.msg
-                                        });
+                                        Swal.fire({ icon: 'error', title: 'Erro', text: confirmResponse.msg });
                                     }
                                 },
                                 error: function() {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Erro',
-                                        text: 'Não foi possível confirmar o código.'
-                                    });
+                                    Swal.fire({ icon: 'error', title: 'Erro', text: 'Não foi possível confirmar o código.' });
                                 }
                             });
                         }
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro',
-                        text: response.msg
-                    });
+                    Swal.fire({ icon: 'error', title: 'Erro', text: response.msg });
                 }
             },
             error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro',
-                    text: 'Erro ao gerar código. Verifique o console.'
-                });
+                Swal.fire({ icon: 'error', title: 'Erro', text: 'Erro ao gerar código. Verifique o console.' });
             }
         });
     });
 
+    // Enter no formulário
     $("#formLogin").on('keypress', function(e) {
         if (e.which === 13) {
             $("#btnLogin").click();

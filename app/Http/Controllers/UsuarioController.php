@@ -11,6 +11,7 @@ use App\Jobs\RenovaCache;
 use App\Jobs\EnviarEmail;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\AutenticaJob;
+use App\Jobs\RecuperaSenhaJob;
 
 class UsuarioController extends Controller
 {
@@ -371,5 +372,85 @@ public function confirmar_ativar_2fa(Request $request)
         ]);
     }
 }
+public function solicitar_recuperacao(Request $request)
+{
+    $request->validate([
+        'email' => 'required',
+    ]);
 
+    $usuario = Usuario::where('email', $request->email)->first();
+
+    if (!$usuario) {
+        return response()->json([
+            'erro' => 's',
+            'msg'  => 'E-mail não encontrado',
+        ], 404);
+    }
+
+    // Gera o código direto, sem Job/fila
+    $codigo = rand(100000, 999999);
+    $valido_ate = Carbon::now()->addMinutes(10);
+
+    CodigoEmail::updateOrCreate(
+        ['email' => $request->email],
+        [
+            'codigo'     => $codigo,
+            'valido_ate' => $valido_ate,
+        ]
+    );
+
+    return response()->json([
+        'erro'   => 'n',
+        'msg'    => 'Código gerado! Verifique na tabela codigo_email.',
+        'codigo' => $codigo // aparece no console do navegador também
+    ], 200);
 }
+ 
+    /**
+     * Etapa 2 — valida o código e atualiza a senha.
+     *
+     * POST /confirmar-recuperacao
+     * Body: { "email": "...", "codigo": "123456", "nova_senha": "..." }
+     */
+    public function confirmar_recuperacao(Request $request)
+    {
+        $request->validate([
+            'email'      => 'required|email',
+            'codigo'     => 'required|string|size:6',
+            'nova_senha' => 'required|string|min:6',
+        ]);
+ 
+        $codigo = CodigoEmail::where('email', $request->email)
+            ->where('codigo', $request->codigo)
+            ->where('valido_ate', '>', Carbon::now())
+            ->first();
+ 
+        if (!$codigo) {
+            return response()->json([
+                'erro' => 's',
+                'msg'  => 'Código inválido ou expirado',
+            ], 422);
+        }
+ 
+        $usuario = Usuario::where('email', $request->email)->first();
+ 
+        if (!$usuario) {
+            return response()->json([
+                'erro' => 's',
+                'msg'  => 'Usuário não encontrado',
+            ], 404);
+        }
+ 
+        $usuario->senha = md5($request->nova_senha);
+        $usuario->save();
+ 
+        // Apaga o código para não poder ser reutilizado
+        CodigoEmail::where('email', $request->email)->delete();
+ 
+        return response()->json([
+            'erro' => 'n',
+            'msg'  => 'Senha alterada com sucesso',
+        ], 200);
+    }
+}
+
