@@ -58,14 +58,22 @@
             gap: 10px;
         }
 
-        .form-control {
+        .form-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .form-control, .form-select {
             border-radius: 10px;
             border: 1px solid #e1e1e1;
             padding: 12px;
             background-color: #fdfdfd;
             transition: all 0.3s;
         }
-        .form-control:focus {
+        .form-control:focus, .form-select:focus {
             border-color: var(--primary-purple);
             box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.1);
         }
@@ -113,6 +121,16 @@
             font-weight: 600;
             font-size: 0.85rem;
         }
+        
+        .badge-stock {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-stock-high { background: #d4edda; color: #155724; }
+        .badge-stock-medium { background: #fff3cd; color: #856404; }
+        .badge-stock-low { background: #f8d7da; color: #721c24; }
 
         .breadcrumb-custom {
             background-color: white;
@@ -122,24 +140,12 @@
             box-shadow: 0 2px 10px rgba(111, 66, 193, 0.05);
         }
         
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .loading-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
+        .preview-image {
+            max-width: 100%;
+            max-height: 100px;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: none;
         }
     </style>
 </head>
@@ -153,6 +159,7 @@
         </a>
         <div class="d-flex gap-3">
             <a href="/inicio" class="btn btn-sm btn-outline-light">Início</a>
+            <a href="/loja" class="btn btn-sm btn-outline-light">Loja</a>
             <a href="#" id="btnLogoutNav" class="btn btn-sm btn-outline-light">Sair</a>
         </div>
     </div>
@@ -175,42 +182,74 @@
     
     <div class="row g-4">
         <!-- Formulário de Cadastro -->
-        <div class="col-lg-4">
+        <div class="col-lg-5">
             <div class="card p-2">
                 <div class="card-header-custom">
-                    <i class="fa-solid fa-plus-circle"></i> Novo Cadastro
+                    <i class="fa-solid fa-plus-circle"></i> Novo Produto
                 </div>
                 <div class="card-body">
                     <form id="formSamsung">
                         <div class="mb-3">
-                            <label class="form-label small text-uppercase fw-bold">
-                                <i class="fa-solid fa-mobile me-1"></i> Aparelho
+                            <label class="form-label">
+                                <i class="fa-solid fa-mobile me-1"></i> Aparelho *
                             </label>
-                            <input type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24" required>
+                            <input type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24 Ultra" required>
                         </div>
+                        
                         <div class="mb-3">
-                            <label class="form-label small text-uppercase fw-bold">
-                                <i class="fa-solid fa-microchip me-1"></i> Modelo
+                            <label class="form-label">
+                                <i class="fa-solid fa-microchip me-1"></i> Modelo *
                             </label>
-                            <input type="text" id="modelo" class="form-control" placeholder="Ex: Ultra / Plus" required>
+                            <input type="text" id="modelo" class="form-control" placeholder="Ex: Ultra / Plus / FE" required>
                         </div>
+                        
                         <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label small text-uppercase fw-bold">
-                                    <i class="fa-solid fa-palette me-1"></i> Cor
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-palette me-1"></i> Cor *
                                 </label>
-                                <input type="text" id="cor" class="form-control" placeholder="Titanium" required>
+                                <input type="text" id="cor" class="form-control" placeholder="Ex: Titanium Black" required>
                             </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label small text-uppercase fw-bold">
-                                    <i class="fa-solid fa-calendar me-1"></i> Ano
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-calendar me-1"></i> Ano *
                                 </label>
                                 <input type="number" id="ano" class="form-control" placeholder="2024" required>
                             </div>
                         </div>
                         
-                        <button type="button" id="salvaraparelho" class="btn-purple mt-3">
-                            <i class="fa-solid fa-cloud-arrow-up me-2"></i> REGISTRAR ITEM
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-tag me-1"></i> Preço (R$) *
+                                </label>
+                                <input type="number" id="preco" class="form-control" placeholder="6999.99" step="0.01" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i class="fa-solid fa-boxes me-1"></i> Estoque *
+                                </label>
+                                <input type="number" id="estoque" class="form-control" placeholder="Quantidade" value="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fa-solid fa-image me-1"></i> URL da Imagem
+                            </label>
+                            <input type="text" id="imagem_url" class="form-control" placeholder="https://images.samsung.com/...">
+                            <img id="previewImg" class="preview-image" alt="Prévia">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fa-solid fa-align-left me-1"></i> Descrição
+                            </label>
+                            <textarea id="descricao" class="form-control" rows="3" placeholder="Descrição do produto..."></textarea>
+                        </div>
+                        
+                        <button type="button" id="salvaraparelho" class="btn-purple mt-2">
+                            <i class="fa-solid fa-cloud-arrow-up me-2"></i> REGISTRAR PRODUTO
                         </button>
                     </form>
                 </div>
@@ -218,7 +257,7 @@
         </div>
 
         <!-- Tabela de Estoque -->
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             <div class="card overflow-hidden">
                 <div class="card-header-custom d-flex justify-content-between w-100">
                     <div>
@@ -232,21 +271,20 @@
                     </div>
                 </div>
                 
-                <div class="table-responsive" style="max-height: 450px;">
+                <div class="table-responsive" style="max-height: 500px;">
                     <table class="table table-hover align-middle">
-                        <thead style="position: sticky; top: 0; z-index: 10;">
+                        <thead style="position: sticky; top: 0; z-index: 10; background: white;">
                             <tr>
                                 <th>ID</th>
-                                <th>Aparelho</th>
-                                <th>Modelo</th>
-                                <th>Cor</th>
-                                <th>Ano</th>
+                                <th>Produto</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabelaCorpo">
                             <tr>
-                                <td colspan="6" class="text-center py-4">Carregando produtos...</td>
+                                <td colspan="5" class="text-center py-4">Carregando produtos...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -271,49 +309,61 @@ function atualizarData() {
     document.getElementById('dataAtual').textContent = data.toLocaleDateString('pt-BR', options);
 }
 
-// FUNÇÃO CORRIGIDA PARA CARREGAR PRODUTOS (USANDO POST COM TOKEN)
+// FUNÇÃO PARA CARREGAR PRODUTOS
 function carregarProdutos() {
-    console.log("=== CARREGANDO PRODUTOS ===");
-    
     const tabela = document.getElementById('tabelaCorpo');
     const contador = document.getElementById('contadorItens');
     let token = $.cookie('token');
     
     if (!token) {
-        console.error("Token não encontrado no cookie!");
-        tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger">Sessão expirada. Faça login novamente.</td></tr>';
+        tabela.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-danger">Sessão expirada. Faça login novamente.</td></tr>';
         return;
     }
     
-    console.log("Token encontrado:", token.substring(0, 20) + "...");
+    tabela.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div> Carregando...</td></tr>';
     
-    // Mostrar loading
-    tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div> Carregando...</td></tr>';
-    
-    // Usando POST como a API espera
     $.ajax({
         url: "/api/todos_samsung",
         method: "POST",
         data: { token: token },
         dataType: "json",
         success: function(data) {
-            console.log("Dados recebidos:", data);
-            
             if (data.erro === 'n' && data.samsung && data.samsung.length > 0) {
                 contador.textContent = data.samsung.length;
                 
                 let html = '';
                 data.samsung.forEach(item => {
+                    let preco = item.preco || 0;
+                    let estoque = item.estoque || 0;
+                    
+                    let estoqueClass = '';
+                    let estoqueText = '';
+                    if (estoque > 20) {
+                        estoqueClass = 'badge-stock-high';
+                        estoqueText = `${estoque} unidades`;
+                    } else if (estoque > 5) {
+                        estoqueClass = 'badge-stock-medium';
+                        estoqueText = `${estoque} unidades`;
+                    } else if (estoque > 0) {
+                        estoqueClass = 'badge-stock-low';
+                        estoqueText = `${estoque} unidades (Últimas!)`;
+                    } else {
+                        estoqueClass = 'badge-stock-low';
+                        estoqueText = 'Esgotado';
+                    }
+                    
                     html += `
                         <tr>
                             <td><span class="badge-id">#${item.id}</span></td>
-                            <td class="fw-bold">${item.aparelho}</td>
-                            <td>${item.modelo}</td>
-                            <td>${item.cor}</td>
-                            <td>${item.ano}</td>
+                            <td>
+                                <strong>${item.aparelho}</strong><br>
+                                <small class="text-muted">${item.modelo} • ${item.cor} • ${item.ano}</small>
+                            </td>
+                            <td class="fw-bold text-primary">R$ ${preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                            <td><span class="badge-stock ${estoqueClass}">${estoqueText}</span></td>
                             <td>
                                 <div class="d-flex gap-1">
-                                    <a href="/altera_samsung/${item.id}" class="btn btn-sm btn-outline-primary" title="Editar">
+                                    <a href="/altera_loja/${item.id}" class="btn btn-sm btn-outline-primary" title="Editar">
                                         <i class="fa-regular fa-pen-to-square"></i>
                                     </a>
                                     <a href="/deleta_samsung/${item.id}" class="btn btn-sm btn-outline-danger" title="Deletar" onclick="return confirm('Tem certeza?')">
@@ -327,79 +377,69 @@ function carregarProdutos() {
                 
                 tabela.innerHTML = html;
             } else {
-                tabela.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhum produto cadastrado.</td></tr>';
+                tabela.innerHTML = '<tr><td colspan="5" class="text-center py-4">Nenhum produto cadastrado.</td></tr>';
                 contador.textContent = '0';
             }
         },
-        error: function(xhr, status, error) {
-            console.error("Erro ao carregar produtos:", {
-                status: xhr.status,
-                response: xhr.responseText
-            });
-            
-            let mensagem = "Erro ao carregar produtos. ";
+        error: function(xhr) {
+            let mensagem = "Erro ao carregar produtos.";
             if (xhr.status === 401) {
                 mensagem = "Token inválido. Faça login novamente.";
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 2000);
+                setTimeout(() => { window.location.href = '/login'; }, 2000);
             }
-            
-            tabela.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-danger">${mensagem}</td></tr>`;
+            tabela.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-danger">${mensagem}</td></tr>`;
             contador.textContent = '0';
         }
     });
 }
 
-// FUNÇÃO PARA VERIFICAR TOKEN
+// PRÉVIA DA IMAGEM
+$('#imagem_url').on('input', function() {
+    let url = $(this).val();
+    if (url) {
+        $('#previewImg').attr('src', url).show();
+    } else {
+        $('#previewImg').hide();
+    }
+});
+
+// VERIFICAR TOKEN
 function verificarToken() {
     let token = $.cookie('token');
-    
     if (!token) {
         Swal.fire({
             icon: 'warning',
             title: 'Sessão expirada',
             text: 'Você precisa estar logado para acessar esta página.',
             confirmButtonColor: '#6f42c1'
-        }).then(() => {
-            window.location.href = '/login';
-        });
+        }).then(() => { window.location.href = '/login'; });
         return false;
     }
-    
-    console.log("Token OK:", token.substring(0, 20) + "...");
     return token;
 }
 
-// DOCUMENT.READY PRINCIPAL
+// DOCUMENT.READY
 $(document).ready(function() {
-    console.log("=== PÁGINA INICIALIZADA ===");
-    
-    // Verificar token
     let token = verificarToken();
     if (!token) return;
     
-    // Atualizar data
     atualizarData();
     setInterval(atualizarData, 60000);
-    
-    // Carregar produtos ao iniciar
     carregarProdutos();
+    
+    // Prévia da imagem
+    $('#imagem_url').on('input', function() {
+        let url = $(this).val();
+        if (url) $('#previewImg').attr('src', url).show();
+        else $('#previewImg').hide();
+    });
     
     // Botão Salvar
     $("#salvaraparelho").click(function() {
-        console.log("=== BOTÃO SALVAR CLICADO ===");
-        
         let tokenAtual = $.cookie('token');
         if (!tokenAtual) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Sessão expirada',
-                text: 'Faça login novamente.',
-                confirmButtonColor: '#6f42c1'
-            }).then(() => {
-                window.location.href = '/login';
-            });
+            Swal.fire({ icon: 'error', title: 'Sessão expirada', text: 'Faça login novamente.' })
+                .then(() => { window.location.href = '/login'; });
             return;
         }
         
@@ -408,24 +448,28 @@ $(document).ready(function() {
         let modelo = $("#modelo").val().trim();
         let cor = $("#cor").val().trim();
         let ano = $("#ano").val().trim();
+        let preco = $("#preco").val().trim();
+        let estoque = $("#estoque").val().trim();
+        let imagem_url = $("#imagem_url").val().trim();
+        let descricao = $("#descricao").val().trim();
         
         if (!aparelho || !modelo || !cor || !ano) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Campos incompletos',
-                text: 'Preencha todos os campos!',
-                confirmButtonColor: '#6f42c1'
-            });
+            Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Preencha todos os campos obrigatórios!' });
+            return;
+        }
+        
+        if (!preco || isNaN(preco) || parseFloat(preco) <= 0) {
+            Swal.fire({ icon: 'warning', title: 'Preço inválido', text: 'Informe um preço válido!' });
+            return;
+        }
+        
+        if (!estoque || isNaN(estoque) || parseInt(estoque) < 0) {
+            Swal.fire({ icon: 'warning', title: 'Estoque inválido', text: 'Informe uma quantidade válida!' });
             return;
         }
         
         if (isNaN(ano) || ano < 2000 || ano > new Date().getFullYear() + 1) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Ano inválido',
-                text: 'Por favor, insira um ano válido (2000-' + (new Date().getFullYear() + 1) + ')',
-                confirmButtonColor: '#6f42c1'
-            });
+            Swal.fire({ icon: 'warning', title: 'Ano inválido', text: 'Informe um ano válido!' });
             return;
         }
         
@@ -434,12 +478,13 @@ $(document).ready(function() {
             modelo: modelo,
             cor: cor,
             ano: parseInt(ano),
+            preco: parseFloat(preco),
+            estoque: parseInt(estoque),
+            imagem_url: imagem_url,
+            descricao: descricao,
             token: tokenAtual
         };
         
-        console.log("Enviando dados:", dados);
-        
-        // Mostrar loading no botão
         let $btn = $(this);
         let textoOriginal = $btn.html();
         $btn.html('<i class="fa-solid fa-spinner fa-spin me-2"></i> SALVANDO...').prop('disabled', true);
@@ -449,8 +494,6 @@ $(document).ready(function() {
             method: "POST",
             data: dados,
             success: function(res) {
-                console.log("Resposta:", res);
-                
                 if(res['erro'] == 'n') {
                     Swal.fire({
                         icon: 'success',
@@ -461,38 +504,23 @@ $(document).ready(function() {
                     });
                     
                     // Limpar campos
-                    $("#aparelho, #modelo, #cor, #ano").val("");
+                    $("#aparelho, #modelo, #cor, #ano, #preco, #estoque, #imagem_url, #descricao").val("");
+                    $("#previewImg").hide();
                     
-                    // Recarregar tabela
                     carregarProdutos();
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Erro',
-                        text: res['msg'] || 'Erro desconhecido',
-                        confirmButtonColor: '#6f42c1'
-                    });
+                    Swal.fire({ icon: 'error', title: 'Erro', text: res['msg'] || 'Erro desconhecido' });
                 }
             },
             error: function(xhr) {
-                console.error("Erro AJAX:", xhr);
                 let mensagem = "Erro ao conectar com o servidor.";
-                
                 if (xhr.status === 401) {
                     mensagem = "Token inválido. Faça login novamente.";
-                    setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
+                    setTimeout(() => { window.location.href = '/login'; }, 2000);
                 } else if (xhr.responseJSON && xhr.responseJSON.msg) {
                     mensagem = xhr.responseJSON.msg;
                 }
-                
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro',
-                    text: mensagem,
-                    confirmButtonColor: '#6f42c1'
-                });
+                Swal.fire({ icon: 'error', title: 'Erro', text: mensagem });
             },
             complete: function() {
                 $btn.html(textoOriginal).prop('disabled', false);
@@ -500,13 +528,11 @@ $(document).ready(function() {
         });
     });
     
-    // Botão Logout
+    // Logout
     $("#btnLogoutNav").click(function(e) {
         e.preventDefault();
-        
         Swal.fire({
             title: 'Deseja sair?',
-            text: "Você será redirecionado para a página de login.",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#6f42c1',
@@ -516,6 +542,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.removeCookie('token', { path: '/' });
+                localStorage.removeItem('userEmail');
                 window.location.href = '/login';
             }
         });

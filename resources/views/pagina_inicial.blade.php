@@ -480,6 +480,10 @@
                     <i class="fa-solid fa-house"></i>
                     Início
                 </a>
+                 <a href="/vitrine" class="nav-item-custom">
+                    <i class="fa-solid fa-store"></i>
+                    Ver Produtos
+                    </a>
                 <a href="/index" class="nav-item-custom">
                     <i class="fa-solid fa-plus-circle"></i>
                     Registrar Produto

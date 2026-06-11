@@ -5,6 +5,8 @@ $(document).ready(function() {
         return;
     }
 
+    
+
     // ========== LOGOUT ==========
     $('#btnLogout').on('click', function() {
         Swal.fire({

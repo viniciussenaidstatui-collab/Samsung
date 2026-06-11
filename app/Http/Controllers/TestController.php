@@ -9,51 +9,54 @@ use Illuminate\Support\Facades\Cache;
 class TestController extends Controller
 {
     public function salva_samsung(Request $request)  
-    {
-        $request->validate([
-            'cor' => 'required',
-            'ano' => 'required',
-            'modelo' => 'required',
-            'aparelho' => 'required'
-        ]);
+{
+    $request->validate([
+        'cor' => 'required',
+        'ano' => 'required',
+        'modelo' => 'required',
+        'aparelho' => 'required',
+        'preco' => 'required|numeric|min:0',
+        'estoque' => 'required|integer|min:0',
+    ]);
 
-        try {
-          $usuario = $request->usuario;
+    try {
+        $usuario = $request->usuario;
 
-           if (!$usuario) {
+        if (!$usuario) {
             return response()->json([
                 'erro' => 's',
                 'msg' => 'Usuário não identificado'
             ], 401);
         }
-            $samsung = new SamsungModel();
-            $samsung->cor = $request->cor;
-            $samsung->ano = $request->ano;
-            $samsung->modelo = $request->modelo;
-            $samsung->aparelho = $request->aparelho;
-            $samsung->user_id = $usuario->id;
-            $samsung->save();
+        
+        $samsung = new SamsungModel();
+        $samsung->cor = $request->cor;
+        $samsung->ano = $request->ano;
+        $samsung->modelo = $request->modelo;
+        $samsung->aparelho = $request->aparelho;
+        $samsung->preco = $request->preco;
+        $samsung->estoque = $request->estoque;
+        $samsung->imagem_url = $request->imagem_url;
+        $samsung->descricao = $request->descricao;
+        $samsung->user_id = $usuario->id;
+        $samsung->save();
 
-    
-            Cache::forget('todos_samsung');
-            Cache::forget('samsung_' . $samsung->id);
-            Cache::forget('dashboard_samsung'); 
+        Cache::forget('todos_samsung');
+        Cache::forget('samsung_' . $samsung->id);
+        Cache::forget('dashboard_samsung'); 
 
-            $data = [
-                'erro' => 'n',
-                'samsung' => $samsung,
-            ];
+        return response()->json([
+            'erro' => 'n',
+            'samsung' => $samsung,
+        ], 200);
 
-            return response()->json($data, 200);
-
-        } catch(\Throwable $th) {
-            return response()->json([
-                'erro' => 's',
-                'msg' => $th->getMessage()
-            ], 500);
-        }
+    } catch(\Throwable $th) {
+        return response()->json([
+            'erro' => 's',
+            'msg' => $th->getMessage()
+        ], 500);
     }
-
+}
     public function exibe_samsung($id)
     {
         $samsung = Cache::remember('samsung_' . $id, now()->addMinutes(10), function() use ($id) {

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\LojaController;
 use App\Http\Middleware\auth_api;
 
 Route::get('/testa-email/{id_usuario}', [UsuarioController::class, 'testa_email']);
@@ -28,6 +29,16 @@ Route::get('/teste', [TestController::class, 'envia_teste']);
 Route::get('/soma', [TestController::class, 'soma']);
 Route::get('/exibe_samsung/{id}', [TestController::class, 'exibe_samsung']);
 Route::post('/todos_samsung', [TestController::class, 'todos_samsung']);
+Route::get('/carrinho/count', [LojaController::class, 'cartCount']);
+Route::get('/carrinho/itens', [LojaController::class, 'cartItems']);
+Route::post('/carrinho/adicionar', [LojaController::class, 'addToCart']);
+Route::post('/carrinho/atualizar', [LojaController::class, 'updateCart']);
+Route::delete('/carrinho/remover/{id}', [LojaController::class, 'removeFromCart']);
+Route::post('/carrinho/checkout', [LojaController::class, 'checkout']);
+Route::post('/carrinho/aplicar-cupom', [LojaController::class, 'applyCoupon']);
+Route::delete('/carrinho/remover-cupom', [LojaController::class, 'removeCoupon']);
+Route::get('/roleta/status', [LojaController::class, 'spinStatus']);
+Route::post('/roleta/girar', [LojaController::class, 'spin']);
 
 // Rotas que precisam de autenticação (token)
 Route::middleware([auth_api::class])->group(function() {

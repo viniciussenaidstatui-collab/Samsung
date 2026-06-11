@@ -19,47 +19,52 @@
         }
 
         body { 
-            background-color: var(--bg-page); 
+            background: linear-gradient(135deg, var(--bg-page) 0%, #fff 100%);
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             color: #444;
+            min-height: 100vh;
         }
 
         .navbar-custom { 
             background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
-            padding: 1.5rem 0;
+            padding: 1.2rem 0;
             border-bottom: 4px solid rgba(255,255,255,0.1);
         }
 
         .card { 
             border: none; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(111, 66, 193, 0.05);
-            transition: transform 0.3s ease;
+            border-radius: 28px; 
+            box-shadow: 0 20px 40px rgba(111, 66, 193, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(111, 66, 193, 0.12);
         }
 
         .card-header-custom {
-            background-color: transparent;
-            border-bottom: 1px solid var(--soft-purple);
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(111,66,193,0.03), rgba(111,66,193,0.08));
+            border-bottom: 2px solid var(--soft-purple);
+            padding: 24px 28px;
             font-weight: 700;
             color: var(--primary-purple);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            border-radius: 28px 28px 0 0;
+            font-size: 1.2rem;
         }
 
         .form-control {
-            border-radius: 10px;
-            border: 1px solid #e1e1e1;
-            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid #e5e5e5;
+            padding: 12px 16px;
             background-color: #fdfdfd;
+            transition: all 0.2s;
         }
         .form-control:focus {
             border-color: var(--primary-purple);
-            box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.1);
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.1);
         }
 
         .form-control:disabled {
@@ -69,47 +74,46 @@
         }
 
         .btn-purple { 
-            background-color: var(--primary-purple); 
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
             color: white; 
             font-weight: 600; 
-            border-radius: 12px; 
+            border-radius: 14px; 
             padding: 12px;
             border: none;
             transition: all 0.3s;
         }
         .btn-purple:hover { 
-            background-color: var(--dark-purple); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(111, 66, 193, 0.3);
             color: white;
-            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
         }
 
         .btn-delete {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #bb2d3b);
         }
         .btn-delete:hover {
-            background-color: #bb2d3b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
         }
 
-        .table thead th {
-            background-color: var(--soft-purple);
-            color: var(--dark-purple);
-            border: none;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            padding: 15px;
+        .btn-cancel {
+            border-radius: 14px;
+            padding: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
-        .table tbody td {
-            padding: 15px;
-            border-bottom: 1px solid #f1f1f1;
+        .btn-cancel:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
         }
 
         .badge-id { 
-            background-color: var(--soft-purple); 
+            background: linear-gradient(135deg, var(--soft-purple), #e9e4ff);
             color: var(--primary-purple); 
-            padding: 6px 12px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 12px;
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .status-dot {
@@ -118,52 +122,79 @@
             background-color: #2ecc71;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 5px;
+            margin-right: 6px;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
         .badge-purple {
-            background-color: var(--soft-purple);
-            color: var(--primary-purple);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
+            background: linear-gradient(135deg, var(--primary-purple), var(--dark-purple));
+            color: white;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .alert-custom {
-            background-color: var(--soft-purple);
-            border-left: 4px solid var(--primary-purple);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff3e0, #ffe8cc);
+            border-left: 5px solid #ff9800;
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-bottom: 28px;
         }
 
         .product-info {
-            background-color: white;
-            border-radius: 10px;
-            padding: 10px 15px;
-            margin-top: 10px;
-            border: 1px solid var(--soft-purple);
+            background: linear-gradient(135deg, white, var(--soft-purple));
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(111,66,193,0.15);
         }
 
         .info-label {
             color: var(--dark-purple);
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            font-weight: 600;
         }
 
         .info-value {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--primary-purple);
-            font-size: 1rem;
+            font-size: 1.1rem;
+            margin-top: 4px;
+        }
+
+        .icon-shield {
+            background: rgba(220, 53, 69, 0.1);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container-custom {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .form-check-input:checked {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        hr {
+            background: linear-gradient(90deg, transparent, var(--primary-purple), transparent);
+            height: 1px;
+            opacity: 0.2;
         }
     </style>
 </head>
@@ -178,250 +209,155 @@
 
     <input type="hidden" id="id_loja" value="{{ $samsung->id }}">
 
-<nav class="navbar navbar-custom mb-5 shadow">
+<nav class="navbar navbar-custom mb-4 shadow-sm">
     <div class="container d-flex justify-content-between align-items-center">
-        <a class="navbar-brand text-white fw-bold italic" href="#">
+        <a class="navbar-brand text-white fw-bold" href="#">
             <i class="fa-solid fa-mobile-screen-button me-2"></i> SAMSUNG/STORE
         </a>
         <div class="d-flex align-items-center gap-4">
             <span class="text-white-50 small">
                 <span class="status-dot"></span> Sistema Ativo
             </span>
-            <span class="badge-purple text-white">
+            <span class="badge-purple">
                 <i class="fa-regular fa-user me-1"></i> Admin
             </span>
         </div>
     </div>
 </nav>
 
-<div class="container pb-5">
+<div class="container container-custom pb-5">
     <!-- Breadcrumb -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex align-items-center gap-2">
-            <i class="fa-solid fa-house text-purple" style="color: var(--primary-purple);"></i>
-            <span class="text-muted">/</span>
-            <span class="text-muted">Deletar Produto</span>
-        </div>
-        <div class="text-muted small">
-            <i class="fa-regular fa-clock me-1"></i> {{ date('d/m/Y H:i') }}
-        </div>
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <i class="fa-solid fa-house" style="color: var(--primary-purple);"></i>
+        <span class="text-muted">/</span>
+        <span class="text-muted">Deletar Produto</span>
+        <span class="text-muted">/</span>
+        <span class="text-dark fw-semibold">Confirmar Exclusão</span>
     </div>
 
     <!-- Alerta de confirmação -->
-    <div class="alert-custom d-flex align-items-center">
-        <i class="fa-solid fa-circle-exclamation me-3" style="color: var(--primary-purple); font-size: 1.5rem;"></i>
+    <div class="alert-custom d-flex align-items-start">
+        <div class="icon-shield me-3 flex-shrink-0">
+            <i class="fa-solid fa-triangle-exclamation" style="color: #ff9800; font-size: 1.5rem;"></i>
+        </div>
         <div>
-            <strong>Atenção!</strong> Você está prestes a deletar o produto abaixo. Esta ação não pode ser desfeita.
+            <strong class="d-block mb-1" style="font-size: 1rem;">⚠️ Atenção! Operação Irreversível</strong>
+            <span class="small">Você está prestes a deletar o produto abaixo permanentemente. Esta ação não pode ser desfeita.</span>
         </div>
     </div>
 
-    <div class="row g-4">
-        
-        <!-- Card de deleção -->
-        <div class="col-lg-4">
-            <div class="card p-2">
-                <div class="card-header-custom">
-                    <i class="fa-solid fa-trash-can" style="color: #dc3545;"></i> Deletar Produto
+    <!-- Card de deleção centralizado -->
+    <div class="card">
+        <div class="card-header-custom">
+            <i class="fa-solid fa-trash-can" style="color: #dc3545; font-size: 1.3rem;"></i> 
+            Exclusão de Produto
+            <span class="ms-auto badge-id">
+                <i class="fa-regular fa-clock me-1"></i> {{ date('d/m/Y') }}
+            </span>
+        </div>
+        <div class="card-body p-4">
+            
+            <!-- Resumo do produto sendo deletado -->
+            <div class="product-info">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <i class="fa-solid fa-box-open" style="color: var(--primary-purple);"></i>
+                    <span class="info-label">PRODUTO SELECIONADO PARA EXCLUSÃO</span>
                 </div>
-                <div class="card-body">
-                    <!-- Informações do produto sendo deletado -->
-                    <div class="product-info mb-4">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <i class="fa-solid fa-circle-info" style="color: var(--primary-purple);"></i>
-                            <span class="info-label">Produto Selecionado</span>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="info-label">ID</div>
-                                <div class="info-value">#{{ $samsung->id }}</div>
-                            </div>
-                            <div class="col-6">
-                                <div class="info-label">Aparelho</div>
-                                <div class="info-value">{{ $samsung->aparelho }}</div>
-                            </div>
-                            <div class="col-6">
-                                <div class="info-label">Modelo</div>
-                                <div class="info-value">{{ $samsung->modelo }}</div>
-                            </div>
-                            <div class="col-6">
-                                <div class="info-label">Cor/Ano</div>
-                                <div class="info-value">{{ $samsung->cor }} / {{ $samsung->ano }}</div>
-                            </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="info-label">ID DO PRODUTO</div>
+                        <div class="info-value">
+                            <i class="fa-regular fa-hashtag me-1"></i>{{ $samsung->id }}
                         </div>
                     </div>
-
-                    <form id="formSamsung">
-                        <div class="mb-3">
-                            <label class="form-label small text-uppercase fw-bold">
-                                <i class="fa-solid fa-mobile me-1"></i>Aparelho
-                            </label>
-                            <input value="{{ $samsung->aparelho }}" disabled type="text" id="aparelho" class="form-control" placeholder="Ex: Galaxy S24">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small text-uppercase fw-bold">
-                                <i class="fa-solid fa-microchip me-1"></i>Modelo
-                            </label>
-                            <input value="{{ $samsung->modelo }}" disabled type="text" id="modelo" class="form-control" placeholder="Ex: Ultra / Plus">
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label small text-uppercase fw-bold">
-                                    <i class="fa-solid fa-palette me-1"></i>Cor
-                                </label>
-                                <input value="{{ $samsung->cor }}" disabled type="text" id="cor" class="form-control" placeholder="Titanium">
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label small text-uppercase fw-bold">
-                                    <i class="fa-solid fa-calendar me-1"></i>Ano
-                                </label>
-                                <input value="{{ $samsung->ano }}" disabled type="number" id="ano" class="form-control" placeholder="2024">
-                            </div>
-                        </div>
-                        
-                        <!-- Confirmação adicional -->
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="confirmDelete">
-                            <label class="form-check-label small text-danger" for="confirmDelete">
-                                Confirmo que desejo deletar este produto permanentemente
-                            </label>
-                        </div>
-
-                        <button type="button" id="salvaraparelho" class="btn btn-purple btn-delete w-100 mt-2" disabled>
-                            <i class="fa-solid fa-trash-can me-2"></i> DELETAR ITEM
-                        </button>
-                        
-                        <a href="/index" class="btn btn-light border w-100 mt-2" style="border-radius: 12px;">
-                            Cancelar
-                        </a>
-                    </form>
+                    <div class="col-md-6">
+                        <div class="info-label">APARELHO</div>
+                        <div class="info-value">{{ $samsung->aparelho }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-label">MODELO</div>
+                        <div class="info-value">{{ $samsung->modelo }}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-label">COR / ANO</div>
+                        <div class="info-value">{{ $samsung->cor }} / {{ $samsung->ano }}</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tabela de estoque -->
-        <div class="col-lg-8">
-            <div class="card overflow-hidden">
-                <div class="card-header-custom d-flex justify-content-between w-100">
-                    <div>
-                        <i class="fa-solid fa-list-check"></i> Estoque Atual
-                        <span class="badge-id ms-2" id="totalItems">0</span>
+            <form id="formSamsung">
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold text-secondary">
+                        <i class="fa-solid fa-mobile me-1"></i>Aparelho
+                    </label>
+                    <input value="{{ $samsung->aparelho }}" disabled type="text" id="aparelho" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold text-secondary">
+                        <i class="fa-solid fa-microchip me-1"></i>Modelo
+                    </label>
+                    <input value="{{ $samsung->modelo }}" disabled type="text" id="modelo" class="form-control">
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label class="form-label small text-uppercase fw-bold text-secondary">
+                            <i class="fa-solid fa-palette me-1"></i>Cor
+                        </label>
+                        <input value="{{ $samsung->cor }}" disabled type="text" id="cor" class="form-control">
                     </div>
-                    <div class="d-flex gap-2">
-                        <button onclick="carregarProdutos()" class="btn btn-sm btn-link text-decoration-none p-0" style="color: var(--primary-purple)">
-                            <i class="fa-solid fa-rotate"></i> Atualizar
-                        </button>
+                    <div class="col-6 mb-3">
+                        <label class="form-label small text-uppercase fw-bold text-secondary">
+                            <i class="fa-solid fa-calendar me-1"></i>Ano
+                        </label>
+                        <input value="{{ $samsung->ano }}" disabled type="number" id="ano" class="form-control">
                     </div>
                 </div>
                 
-                <div class="table-responsive" style="max-height: 500px;">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Aparelho</th>
-                                <th>Modelo</th>
-                                <th>Cor</th>
-                                <th>Ano</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaCorpo">
-                            <!-- Dados serão inseridos via JavaScript -->
-                        </tbody>
-                    </table>
+                <hr class="my-4">
+
+                <!-- Confirmação adicional com estilo melhorado -->
+                <div class="form-check mb-4 p-3" style="background-color: rgba(220, 53, 69, 0.05); border-radius: 14px;">
+                    <input class="form-check-input" type="checkbox" id="confirmDelete" style="cursor: pointer; transform: scale(1.1);">
+                    <label class="form-check-label text-danger fw-semibold" for="confirmDelete" style="cursor: pointer;">
+                        <i class="fa-solid fa-check-circle me-1"></i> Confirmo que desejo deletar este produto permanentemente
+                    </label>
                 </div>
 
-                <div id="loader" class="text-center py-5 d-none">
-                    <div class="spinner-grow text-primary" role="status" style="color: var(--primary-purple) !important;"></div>
-                    <p class="mt-2 text-muted small italic">Sincronizando com a nuvem...</p>
-                </div>
+                <button type="button" id="salvaraparelho" class="btn btn-purple btn-delete w-100 mb-2" disabled>
+                    <i class="fa-solid fa-trash-can me-2"></i> DELETAR PRODUTO
+                </button>
+                
+                <a href="/index" class="btn btn-cancel border w-100 d-flex align-items-center justify-content-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Cancelar e Voltar
+                </a>
+            </form>
 
-                <!-- Rodapé da tabela -->
-                <div class="card-footer bg-transparent border-0 p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="small text-muted">
-                            <i class="fa-regular fa-hard-drive me-1"></i>
-                            <span id="itemsCount">0</span> itens no estoque
-                        </div>
-                        <div class="small text-muted">
-                            <i class="fa-regular fa-clock me-1"></i>
-                            Última atualização: agora
-                        </div>
-                    </div>
-                </div>
+            <!-- Dica de segurança -->
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <i class="fa-solid fa-shield-haltered me-1"></i> 
+                    Produto será removido permanentemente do sistema
+                </small>
             </div>
         </div>
+    </div>
 
+    <!-- Cards decorativos inferiores -->
+    <div class="row mt-4 g-3">
+        <div class="col-md-6">
+            <div class="p-3 bg-white rounded-4 shadow-sm text-center">
+                <i class="fa-solid fa-database me-2" style="color: var(--primary-purple);"></i>
+                <small class="text-muted">Exclusão permanente do banco de dados</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-3 bg-white rounded-4 shadow-sm text-center">
+                <i class="fa-solid fa-clock-rotate-left me-2" style="color: var(--primary-purple);"></i>
+                <small class="text-muted">Ação não pode ser desfeita</small>
+            </div>
+        </div>
     </div>
 </div>
-
-<script>
-    const API_URL = '/api';
-
-    async function carregarProdutos() {
-        const tabela = document.getElementById('tabelaCorpo');
-        const loader = document.getElementById('loader');
-        
-        tabela.innerHTML = ''; 
-        loader.classList.remove('d-none');
-
-        try {
-            const response = await fetch(`${API_URL}/todos_samsung`);
-            const data = await response.json();
-
-            if (data.samsung && data.samsung.length > 0) {
-                document.getElementById('totalItems').textContent = data.samsung.length;
-                document.getElementById('itemsCount').textContent = data.samsung.length;
-                
-                data.samsung.forEach(item => {
-                    const isCurrentItem = item.id == {{ $samsung->id }};
-                    const rowStyle = isCurrentItem ? 'style="background-color: rgba(220, 53, 69, 0.05); border-left: 3px solid #dc3545;"' : '';
-                    
-                    tabela.innerHTML += `
-                        <tr ${rowStyle}>
-                            <td>
-                                <span class="badge-id">#${item.id}</span>
-                                ${isCurrentItem ? '<span class="badge-purple ms-1">Deletando</span>' : ''}
-                            </td>
-                            <td><span class="fw-bold">${item.aparelho}</span></td>
-                            <td><span class="text-secondary">${item.modelo}</span></td>
-                            <td>
-                                <i class="fa-solid fa-palette me-1" style="color: ${getCorColor(item.cor)};"></i> 
-                                ${item.cor}
-                            </td>
-                            <td>
-                                <span class="badge rounded-pill bg-light text-dark border">${item.ano}</span>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                tabela.innerHTML = '<tr><td colspan="5" class="text-center py-5">Nenhum produto cadastrado no momento.</td></tr>';
-                document.getElementById('totalItems').textContent = '0';
-                document.getElementById('itemsCount').textContent = '0';
-            }
-        } catch (error) {
-            console.error("Erro ao carregar:", error);
-            tabela.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-danger">Erro ao conectar com a API.</td></tr>';
-        } finally {
-            loader.classList.add('d-none');
-        }
-    }
-
-    function getCorColor(cor) {
-        const cores = {
-            'Titanium': '#808080',
-            'Black': '#000000',
-            'White': '#FFFFFF',
-            'Silver': '#C0C0C0',
-            'Gold': '#FFD700',
-            'Blue': '#0000FF',
-            'Red': '#FF0000',
-            'Purple': '#800080',
-            'Green': '#008000'
-        };
-        return cores[cor] || '#6f42c1';
-    }
-</script>
 
 <script>
     $(document).ready(function () {
@@ -456,12 +392,15 @@
         
         console.log("✅ ACESSO PERMITIDO! Token válido:", token.substring(0, 15) + "...");
         
-        // Carregar produtos
-        carregarProdutos();
-        
         // Controle do checkbox de confirmação
         $('#confirmDelete').change(function() {
             $('#salvaraparelho').prop('disabled', !this.checked);
+            
+            // Efeito visual ao habilitar
+            if(this.checked) {
+                $('#salvaraparelho').addClass('animate__animated animate__pulse');
+                setTimeout(() => $('#salvaraparelho').removeClass('animate__animated animate__pulse'), 500);
+            }
         });
 
         $("#salvaraparelho").click(function () {
@@ -469,22 +408,24 @@
                 Swal.fire({
                     icon: 'warning',
                     title: 'Confirmação necessária',
-                    text: 'Por favor, confirme que deseja deletar o produto.',
-                    confirmButtonColor: '#6f42c1'
+                    text: 'Por favor, confirme que deseja deletar o produto marcando a caixa de confirmação.',
+                    confirmButtonColor: '#6f42c1',
+                    confirmButtonText: 'Entendi'
                 });
                 return;
             }
 
             // Usar SweetAlert para confirmação
             Swal.fire({
-                title: 'Tem certeza?',
-                text: "Esta ação não pode ser desfeita!",
+                title: '⚠️ Tem certeza?',
+                text: "Esta ação não pode ser desfeita! O produto será removido permanentemente.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dc3545',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sim, deletar!',
-                cancelButtonText: 'Cancelar'
+                confirmButtonText: '<i class="fa-solid fa-trash-can me-2"></i>Sim, deletar!',
+                cancelButtonText: '<i class="fa-solid fa-times me-2"></i>Cancelar',
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     
@@ -495,7 +436,7 @@
                         Swal.fire({
                             icon: 'warning',
                             title: 'Sessão expirada',
-                            text: 'Faça login novamente.',
+                            text: 'Faça login novamente para continuar.',
                             confirmButtonColor: '#6f42c1'
                         }).then(() => {
                             window.location.href = '/login';
@@ -512,8 +453,8 @@
                         },
                         beforeSend: function() {
                             Swal.fire({
-                                title: 'Deletando...',
-                                text: 'Por favor, aguarde.',
+                                title: '<span style="color:#6f42c1">Processando exclusão...</span>',
+                                html: 'Removendo produto do sistema<br><small>Aguarde um momento</small>',
                                 allowOutsideClick: false,
                                 didOpen: () => {
                                     Swal.showLoading();
@@ -526,18 +467,21 @@
                                 // ✅ SUCESSO - Mostrar mensagem de sucesso e redirecionar
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'Sucesso!',
-                                    text: 'Produto deletado com sucesso!',
+                                    title: '✅ Produto deletado!',
+                                    text: 'O produto foi removido com sucesso do sistema.',
                                     timer: 2000,
-                                    showConfirmButton: false
+                                    showConfirmButton: false,
+                                    background: '#fff',
+                                    backdrop: true
                                 }).then(() => {
-                                    window.location.href = '/index'; // Redireciona para página de criar
+                                    window.location.href = '/index';
                                 });
                             } else {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Erro',
-                                    text: res['msg'] || 'Item Apagado com Sucesso'
+                                    title: 'Erro ao deletar',
+                                    text: res['msg'] || 'Não foi possível deletar o produto. Tente novamente.',
+                                    confirmButtonColor: '#6f42c1'
                                 });
                             }
                         },
@@ -552,13 +496,15 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Permissão Negada',
-                                        text: response.msg || 'Você não tem permissão para deletar este produto.'
+                                        text: response.msg || 'Você não tem permissão para deletar este produto.',
+                                        confirmButtonColor: '#6f42c1'
                                     });
                                 } else if (xhr.status === 401 || xhr.status === 419) {
                                     Swal.fire({
                                         icon: 'warning',
                                         title: 'Sessão expirada',
-                                        text: 'Faça login novamente.'
+                                        text: 'Sua sessão expirou. Faça login novamente.',
+                                        confirmButtonColor: '#6f42c1'
                                     }).then(() => {
                                         window.location.href = '/login';
                                     });
@@ -566,14 +512,16 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Erro',
-                                        text: response.msg || 'Erro ao deletar produto.'
+                                        text: response.msg || 'Erro ao conectar com o servidor.',
+                                        confirmButtonColor: '#6f42c1'
                                     });
                                 }
                             } catch(e) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Erro',
-                                    text: 'Erro ao conectar com o servidor.'
+                                    title: 'Erro no servidor',
+                                    text: 'Não foi possível processar sua solicitação. Tente novamente.',
+                                    confirmButtonColor: '#6f42c1'
                                 });
                             }
                         }
