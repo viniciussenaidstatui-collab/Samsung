@@ -175,7 +175,6 @@
             pointer-events: none;
         }
 
-        /* Reutiliza a classe status-badge do navbar como eyebrow */
         .hero-section .status-badge {
             background: var(--soft-purple);
             color: var(--primary-purple);
@@ -246,26 +245,52 @@
             transform: translateY(-2px);
         }
 
-        /* Ícone hero */
-        .hero-section .position-relative {
-            width: 300px; height: 300px;
-            background: linear-gradient(135deg, var(--soft-purple), #e8f4ff);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+        /* ══════════════════════════════
+           CONTAINER DO CUBO 3D
+        ══════════════════════════════ */
+        #canvas-container {
+            width: 350px;
+            height: 350px;
             margin: 0 auto;
+            border-radius: 50%;
+            overflow: hidden;
             position: relative;
+            background: linear-gradient(135deg, #f0ebff, #e8f4ff);
+            box-shadow: 0 20px 60px rgba(111,66,193,0.15);
+            border: 2px solid rgba(111,66,193,0.1);
+            cursor: grab;
         }
 
-        .hero-section .position-relative::before {
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+
+        #canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Anel decorativo */
+        #canvas-container::before {
             content: '';
             position: absolute;
             inset: -14px;
             border-radius: 50%;
             border: 1px dashed rgba(111,66,193,0.2);
+            pointer-events: none;
+            z-index: 1;
         }
 
-        /* Esconde o ícone de fundo grande que estava antes */
-        .hero-section .fa-layer-group { display: none; }
+        #canvas-container::after {
+            content: '';
+            position: absolute;
+            inset: -28px;
+            border-radius: 50%;
+            border: 1px solid rgba(111,66,193,0.06);
+            pointer-events: none;
+            z-index: 0;
+        }
 
         /* ══════════════════════════════
            SEARCH SECTION
@@ -446,6 +471,17 @@
             .hero-title { font-size: 2.2rem; }
             .installment-banner { padding: 32px 24px; }
             .search-section { padding: 20px; }
+            #canvas-container {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #canvas-container {
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -541,10 +577,8 @@
                 </div>
             </div>
             <div class="col-lg-6 text-center d-none d-lg-block">
-                <div class="position-relative">
-                    <i class="fa-solid fa-layer-group fa-8x" style="color: var(--primary-purple); opacity: 0.1;"></i>
-                    <i class="fa-solid fa-mobile-screen fa-6x position-absolute top-50 start-50 translate-middle" style="color: var(--primary-purple);"></i>
-                </div>
+                <!-- CONTAINER DO CUBO 3D COM IMAGENS -->
+                <div id="canvas-container"></div>
             </div>
         </div>
     </div>
@@ -616,9 +650,186 @@
     </div>
 </footer>
 
+<!-- ════════════════════════════════════════════════
+     THREE.JS VIA CDN
+     ════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script>
+// ════════════════════════════════════════════════
+// CUBO 3D COM IMAGENS PERSONALIZADAS EM CADA FACE
+// ════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('canvas-container');
+    
+    if (!container) {
+        console.error('Container não encontrado!');
+        return;
+    }
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    // 1. CENA
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0ebff);
+
+    // 2. CÂMERA
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+    camera.position.set(2.5, 1.5, 4.5);
+    camera.lookAt(0, 0, 0);
+
+    // 3. RENDERIZADOR
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    // ════════════════════════════════════════════════
+    // 4. IMAGENS PARA CADA FACE DO CUBO
+    //    (Use URLs de imagens ou base64)
+    // ════════════════════════════════════════════════
+    
+    // Mapeamento das faces do cubo:
+    // Ordem: +X (direita), -X (esquerda), +Y (cima), -Y (baixo), +Z (frente), -Z (trás)
+    
+    // ════════════════════════════════════════════════
+// 4. IMAGENS PARA CADA FACE DO CUBO
+//    (Suas imagens locais na pasta public/images/cubo/)
+// ════════════════════════════════════════════════
+
+const imagens = [
+    // Face 1: Direita (+X)
+    '/images/cubo/Bunny.jpg',
+    
+    // Face 2: Esquerda (-X)
+    '/images/cubo/Hugo.jpg',
+    
+    // Face 3: Cima (+Y)
+    '/images/cubo/Kaiser.jpg',
+    
+    // Face 4: Baixo (-Y)
+    '/images/cubo/Loki.jpg',
+    
+    // Face 5: Frente (+Z)
+    '/images/cubo/Lorenzo.jpg',
+    
+    // Face 6: Trás (-Z)
+    '/images/cubo/Sae.jpg'
+];
+    // Função para carregar uma textura a partir de uma URL
+    function carregarTextura(url) {
+        return new THREE.TextureLoader().load(url);
+    }
+
+    // Cria um material para cada face com sua respectiva imagem
+    const materials = imagens.map(url => 
+        new THREE.MeshStandardMaterial({
+            map: carregarTextura(url),
+            roughness: 0.3,
+            metalness: 0.1,
+            side: THREE.DoubleSide
+        })
+    );
+
+    // 5. CRIA O CUBO COM OS MATERIAIS
+    const geometry = new THREE.BoxGeometry(1.8, 1.8, 1.8);
+    const cube = new THREE.Mesh(geometry, materials);
+    cube.castShadow = true;
+    cube.receiveShadow = true;
+    scene.add(cube);
+
+    // 6. LUZES
+    const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+    scene.add(ambientLight);
+
+    const mainLight = new THREE.DirectionalLight(0xffffff, 2);
+    mainLight.position.set(5, 5, 5);
+    mainLight.castShadow = true;
+    scene.add(mainLight);
+
+    const fillLight = new THREE.DirectionalLight(0x8888ff, 0.8);
+    fillLight.position.set(-5, 0, 5);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0x6f42c1, 0.5);
+    rimLight.position.set(-3, -2, -5);
+    scene.add(rimLight);
+
+    // 7. ANIMAÇÃO
+    let rotationSpeedY = 0.012;
+    let rotationSpeedX = 0.004;
+    let time = 0;
+
+    // Efeito de mouse
+    let mouseX = 0, mouseY = 0;
+    let targetRotX = 0, targetRotY = 0;
+
+    container.addEventListener('mousemove', (event) => {
+        const rect = container.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        mouseX = x * 0.4;
+        mouseY = y * 0.4;
+    });
+
+    container.addEventListener('mouseleave', () => {
+        mouseX = 0;
+        mouseY = 0;
+    });
+
+    // Loop principal
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        time += 0.01;
+        
+        // Rotação automática
+        cube.rotation.y += rotationSpeedY;
+        cube.rotation.x += rotationSpeedX;
+        
+        // Flutuação
+        cube.position.y = Math.sin(time * 0.6) * 0.1;
+        
+        // Efeito de mouse
+        targetRotX += (mouseY - targetRotX) * 0.05;
+        targetRotY += (mouseX - targetRotY) * 0.05;
+        
+        cube.rotation.x += targetRotX * 0.002;
+        cube.rotation.y += targetRotY * 0.002;
+        
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+
+    // 8. RESPONSIVO
+    function resizeRenderer() {
+        const newWidth = container.clientWidth;
+        const newHeight = container.clientHeight;
+        
+        if (newWidth > 0 && newHeight > 0) {
+            camera.aspect = newWidth / newHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(newWidth, newHeight);
+        }
+    }
+
+    window.addEventListener('resize', resizeRenderer);
+
+    const resizeObserver = new ResizeObserver(() => resizeRenderer());
+    resizeObserver.observe(container);
+
+    console.log('🚀 Cubo 3D com imagens carregado com sucesso!');
+    console.log('📐 Dimensões:', width, 'x', height);
+});
+
+// ════════════════════════════════════════════════
+// SCRIPT DO LOGIN/LOGOUT
+// ════════════════════════════════════════════════
 $(document).ready(function() {
-    // Verificar se está logado
     let token = $.cookie('token');
     
     if (!token) {
@@ -626,11 +837,9 @@ $(document).ready(function() {
         return;
     }
 
-    // Mostrar email do usuário (se tiver salvo)
     let userEmail = localStorage.getItem('userEmail') || 'Admin';
     $('#userEmailText').text(userEmail);
 
-    // Atualizar hora atual
     function updateTime() {
         let now = new Date();
         let timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -639,7 +848,6 @@ $(document).ready(function() {
     updateTime();
     setInterval(updateTime, 1000);
 
-    // Logout
     $('#btnLogout').click(function(e) {
         e.preventDefault();
         

@@ -1,8 +1,9 @@
 <?php
-// app/Http/Controllers/LojaController.php
+
 
 namespace App\Http\Controllers;
 
+use App\Models\Boleto;
 use App\Models\SamsungModel;
 use App\Models\Carrinho;
 use App\Models\Pedido;
@@ -10,8 +11,11 @@ use App\Models\PedidoItem;
 use App\Models\DiscountSpin;
 use App\Models\TokenUser;
 use App\Models\Usuario;
+use App\Mail\BoletoMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class LojaController extends Controller
@@ -23,7 +27,6 @@ class LojaController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(12);
         
-        // Produtos em destaque (mais recentes)
         $destaques = SamsungModel::where('estoque', '>', 0)
             ->orderBy('created_at', 'desc')
             ->limit(4)
@@ -37,7 +40,6 @@ class LojaController extends Controller
     {
         $produto = SamsungModel::findOrFail($id);
         
-        // Produtos relacionados (mesmo modelo ou mesma linha)
         $relacionados = SamsungModel::where('id', '!=', $id)
             ->where('estoque', '>', 0)
             ->where(function($q) use ($produto) {
@@ -60,7 +62,6 @@ class LojaController extends Controller
         
         $produto = SamsungModel::findOrFail($request->produto_id);
         
-        // Verifica estoque
         if (!$produto->hasStock($request->quantidade)) {
             return response()->json([
                 'erro' => 's',
@@ -71,7 +72,6 @@ class LojaController extends Controller
         $user = $this->getUsuarioFromRequest($request);
         $sessionId = session()->getId();
         
-        // Verifica se já existe no carrinho
         $cartItem = Carrinho::where('produto_id', $request->produto_id)
             ->when($user, fn($q) => $q->where('user_id', $user->id))
             ->when(!$user, fn($q) => $q->where('session_id', $sessionId))
@@ -89,21 +89,20 @@ class LojaController extends Controller
             $cartItem->save();
         } else {
             Carrinho::create([
-                'user_id' => $user?->id,
-                'session_id' => !$user ? $sessionId : null,
-                'produto_id' => $produto->id,
-                'quantidade' => $request->quantidade,
+                'user_id'        => $user?->id,
+                'session_id'     => !$user ? $sessionId : null,
+                'produto_id'     => $produto->id,
+                'quantidade'     => $request->quantidade,
                 'preco_unitario' => $produto->preco
             ]);
         }
         
-        // Atualiza contador do carrinho na sessão
         $cartCount = $this->getCartCount($request);
         session(['cart_count' => $cartCount]);
         
         return response()->json([
-            'erro' => 'n',
-            'msg' => 'Produto adicionado ao carrinho!',
+            'erro'       => 'n',
+            'msg'        => 'Produto adicionado ao carrinho!',
             'cart_count' => $cartCount
         ]);
     }
@@ -112,8 +111,8 @@ class LojaController extends Controller
     public function cart()
     {
         $cartItems = $this->getCartItems(request());
-        $subtotal = $cartItems->sum('subtotal');
-        $cupom = session('cupom');
+        $subtotal  = $cartItems->sum('subtotal');
+        $cupom     = session('cupom');
         
         $desconto = 0;
         if ($cupom && isset($cupom['percent'])) {
@@ -134,17 +133,17 @@ class LojaController extends Controller
     public function updateCart(Request $request)
     {
         $request->validate([
-            'cart_id' => 'required|exists:carrinhos,id',
+            'cart_id'    => 'required|exists:carrinhos,id',
             'quantidade' => 'required|integer|min:1'
         ]);
         
         $cartItem = $this->findCartItemOrFail($request, $request->cart_id);
-        $produto = SamsungModel::findOrFail($cartItem->produto_id);
+        $produto  = SamsungModel::findOrFail($cartItem->produto_id);
         
         if (!$produto->hasStock($request->quantidade)) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Estoque insuficiente. Máximo: ' . $produto->estoque
+                'msg'  => 'Estoque insuficiente. Máximo: ' . $produto->estoque
             ], 422);
         }
         
@@ -154,8 +153,8 @@ class LojaController extends Controller
         session(['cart_count' => $this->getCartCount($request)]);
         
         return response()->json([
-            'erro' => 'n',
-            'msg' => 'Carrinho atualizado',
+            'erro'       => 'n',
+            'msg'        => 'Carrinho atualizado',
             'cart_count' => session('cart_count')
         ]);
     }
@@ -163,7 +162,7 @@ class LojaController extends Controller
     // Remover do carrinho
     public function removeFromCart($id)
     {
-        $request = request();
+        $request  = request();
         $cartItem = $this->findCartItemOrFail($request, $id);
         $cartItem->delete();
         
@@ -171,8 +170,8 @@ class LojaController extends Controller
         session(['cart_count' => $cartCount]);
         
         return response()->json([
-            'erro' => 'n',
-            'msg' => 'Item removido',
+            'erro'       => 'n',
+            'msg'        => 'Item removido',
             'cart_count' => $cartCount
         ]);
     }
@@ -180,16 +179,14 @@ class LojaController extends Controller
     // Aplicar cupom
     public function applyCoupon(Request $request)
     {
-        $request->validate([
-            'coupon_code' => 'required|string'
-        ]);
+        $request->validate(['coupon_code' => 'required|string']);
 
         $user = $this->getUsuarioFromRequest($request);
 
         if (!$user) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Faca login para usar o cupom'
+                'msg'  => 'Faca login para usar o cupom'
             ], 401);
         }
         
@@ -198,21 +195,21 @@ class LojaController extends Controller
         if (!$coupon) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Cupom inválido ou expirado'
+                'msg'  => 'Cupom inválido ou expirado'
             ], 422);
         }
         
         session(['cupom' => [
-            'code' => $coupon->coupon_code,
+            'code'    => $coupon->coupon_code,
             'percent' => $coupon->discount_percent,
-            'label' => $coupon->prize_label,
-            'id' => $coupon->id
+            'label'   => $coupon->prize_label,
+            'id'      => $coupon->id
         ]]);
         
         return response()->json([
-            'erro' => 'n',
-            'msg' => 'Cupom aplicado!',
-            'coupon' => $this->formatCoupon($coupon),
+            'erro'    => 'n',
+            'msg'     => 'Cupom aplicado!',
+            'coupon'  => $this->formatCoupon($coupon),
             'percent' => $coupon->discount_percent
         ]);
     }
@@ -224,7 +221,7 @@ class LojaController extends Controller
         return response()->json(['erro' => 'n', 'msg' => 'Cupom removido']);
     }
     
-    // Finalizar compra
+    // ─── Finalizar compra ────────────────────────────────────────────────────
     public function checkout(Request $request)
     {
         $user = $this->getUsuarioFromRequest($request);
@@ -232,7 +229,7 @@ class LojaController extends Controller
         if (!$user) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Faça login para finalizar a compra'
+                'msg'  => 'Faça login para finalizar a compra'
             ], 401);
         }
         
@@ -241,55 +238,54 @@ class LojaController extends Controller
         if ($cartItems->isEmpty()) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Carrinho vazio'
+                'msg'  => 'Carrinho vazio'
             ], 422);
         }
         
         DB::beginTransaction();
         
         try {
-            $subtotal = $cartItems->sum('subtotal');
-            $coupon = null;
-            $couponCode = $request->input('coupon_code');
+            $subtotal      = $cartItems->sum('subtotal');
+            $coupon        = null;
+            $couponCode    = $request->input('coupon_code');
+            $paymentMethod = $request->input('payment_method', 'card'); // card | pix | boleto
 
             if ($couponCode) {
                 $coupon = $this->findValidCoupon($couponCode, $user->id);
 
                 if (!$coupon) {
                     DB::rollBack();
-
                     return response()->json([
                         'erro' => 's',
-                        'msg' => 'Cupom invalido ou expirado'
+                        'msg'  => 'Cupom invalido ou expirado'
                     ], 422);
                 }
             }
 
             $descontoPercent = $coupon?->discount_percent ?? 0;
-            $descontoValor = $subtotal * ($descontoPercent / 100);
-            $total = $subtotal - $descontoValor;
+            $descontoValor   = $subtotal * ($descontoPercent / 100);
+            $total           = $subtotal - $descontoValor;
             
             // Criar pedido
             $pedido = Pedido::create([
-                'user_id' => $user->id,
-                'numero_pedido' => 'SAM-' . strtoupper(Str::random(10)),
-                'cupom_aplicado' => $coupon?->coupon_code,
+                'user_id'          => $user->id,
+                'numero_pedido'    => 'SAM-' . strtoupper(Str::random(10)),
+                'cupom_aplicado'   => $coupon?->coupon_code,
                 'desconto_percent' => $descontoPercent,
-                'valor_total' => $total,
-                'status' => 'pendente'
+                'valor_total'      => $total,
+                'status'           => 'pendente'
             ]);
             
             // Criar itens do pedido e dar baixa no estoque
             foreach ($cartItems as $item) {
                 PedidoItem::create([
-                    'pedido_id' => $pedido->id,
-                    'produto_id' => $item->produto_id,
-                    'quantidade' => $item->quantidade,
+                    'pedido_id'      => $pedido->id,
+                    'produto_id'     => $item->produto_id,
+                    'quantidade'     => $item->quantidade,
                     'preco_unitario' => $item->preco_unitario,
-                    'subtotal' => $item->subtotal
+                    'subtotal'       => $item->subtotal
                 ]);
                 
-                // Dar baixa no estoque
                 $produto = SamsungModel::find($item->produto_id);
                 $produto->estoque -= $item->quantidade;
                 $produto->save();
@@ -298,7 +294,7 @@ class LojaController extends Controller
             // Marcar cupom como usado
             if ($coupon) {
                 DiscountSpin::where('id', $coupon->id)->update([
-                    'used' => true,
+                    'used'    => true,
                     'used_at' => now()
                 ]);
             }
@@ -308,10 +304,29 @@ class LojaController extends Controller
             session()->forget(['cart_count', 'cupom']);
             
             DB::commit();
+
+            // ─── Boleto: gera, salva na tabela e tenta enviar e-mail ─────────
+            if ($paymentMethod === 'boleto') {
+                $boletoData = $this->gerarERegistrarBoleto($user, $total, $pedido->id);
+
+                return response()->json([
+                    'erro'          => 'n',
+                    'msg'           => 'Boleto gerado com sucesso!',
+                    'pedido_numero' => $pedido->numero_pedido,
+                    'boleto_dados'  => [
+                        'valor'         => number_format($total, 2, '.', ''),
+                        'vencimento'    => $boletoData['vencimento'],
+                        'nosso_numero'  => $boletoData['nosso_numero'],
+                        'codigo_barras' => $boletoData['codigo_barras'],
+                        'boleto_id'     => $boletoData['boleto_id'],
+                        'email_status'  => $boletoData['email_status'],
+                    ]
+                ]);
+            }
             
             return response()->json([
-                'erro' => 'n',
-                'msg' => 'Pedido realizado com sucesso!',
+                'erro'          => 'n',
+                'msg'           => 'Pedido realizado com sucesso!',
                 'pedido_numero' => $pedido->numero_pedido
             ]);
             
@@ -319,15 +334,93 @@ class LojaController extends Controller
             DB::rollBack();
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Erro ao processar pedido: ' . $e->getMessage()
+                'msg'  => 'Erro ao processar pedido: ' . $e->getMessage()
             ], 500);
         }
     }
 
+    // ─── Gera boleto, salva na tabela e envia e-mail (síncrono, sem fila) ──
+    private function gerarERegistrarBoleto(Usuario $user, float $total, int $pedidoId): array
+    {
+        $nosso_numero  = 'SAM-' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT);
+        $codigo_barras = $this->gerarCodigoBarrasFalso($total);
+        $vencimento    = now()->addDays(3)->format('Y-m-d');   // vence em 3 dias úteis
+
+        // Salva na tabela boletos com status "pendente"
+        $boleto = Boleto::create([
+            'usuario_id'    => $user->id,
+            'email'         => $user->email,
+            'valor'         => $total,
+            'vencimento'    => $vencimento,
+            'nosso_numero'  => $nosso_numero,
+            'codigo_barras' => $codigo_barras,
+            'status_email'  => 'pendente',
+        ]);
+
+        $emailStatus = 'pendente';
+
+        // Tenta enviar o e-mail de forma síncrona (sem queue:work)
+        try {
+            Mail::to($user->email)->send(new BoletoMail(
+                $user,
+                $total,
+                $vencimento,
+                $nosso_numero,
+                $codigo_barras
+            ));
+
+            // Atualiza status para "enviado"
+            $boleto->update([
+                'status_email' => 'enviado',
+                'enviado_em'   => now(),
+            ]);
+
+            $emailStatus = 'enviado';
+
+        } catch (\Throwable $e) {
+            // Mailtrap bloqueado (rede da escola): registra no log e marca como erro
+            // O boleto ainda fica salvo na tabela para consulta
+            $boleto->update([
+                'status_email' => 'erro',
+                'erro_msg'     => $e->getMessage(),
+            ]);
+
+            $emailStatus = 'erro';
+
+            // Loga os dados completos — você vê em storage/logs/laravel.log
+            Log::warning('📧 [BOLETO] E-mail não enviado (rede bloqueada). Dados do boleto:', [
+                'boleto_id'     => $boleto->id,
+                'usuario'       => $user->nome,
+                'email'         => $user->email,
+                'valor'         => 'R$ ' . number_format($total, 2, ',', '.'),
+                'vencimento'    => date('d/m/Y', strtotime($vencimento)),
+                'nosso_numero'  => $nosso_numero,
+                'codigo_barras' => $codigo_barras,
+                'erro'          => $e->getMessage(),
+            ]);
+        }
+
+        return [
+            'boleto_id'     => $boleto->id,
+            'nosso_numero'  => $nosso_numero,
+            'codigo_barras' => $codigo_barras,
+            'vencimento'    => $vencimento,
+            'email_status'  => $emailStatus,
+        ];
+    }
+
+    private function gerarCodigoBarrasFalso(float $valor): string
+    {
+        $valorFormatado = str_pad((int)($valor * 100), 10, '0', STR_PAD_LEFT);
+        return '00190.00009 01234.567890 12345.' . $valorFormatado . ' 2 ' . rand(10000000000000, 99999999999999);
+    }
+
+    // ─── Métodos auxiliares ──────────────────────────────────────────────────
+
     public function cartCount(Request $request)
     {
         return response()->json([
-            'erro' => 'n',
+            'erro'  => 'n',
             'count' => $this->getCartCount($request)
         ]);
     }
@@ -335,20 +428,20 @@ class LojaController extends Controller
     public function cartItems(Request $request)
     {
         $cartItems = $this->getCartItems($request);
-        $subtotal = $cartItems->sum('subtotal');
-        $user = $this->getUsuarioFromRequest($request);
-        $coupon = ($user && $request->input('coupon_code'))
+        $subtotal  = $cartItems->sum('subtotal');
+        $user      = $this->getUsuarioFromRequest($request);
+        $coupon    = ($user && $request->input('coupon_code'))
             ? $this->findValidCoupon($request->input('coupon_code'), $user->id)
             : null;
-        $desconto = $coupon ? $subtotal * ($coupon->discount_percent / 100) : 0;
+        $desconto  = $coupon ? $subtotal * ($coupon->discount_percent / 100) : 0;
 
         return response()->json([
-            'erro' => 'n',
-            'items' => $cartItems->values(),
+            'erro'     => 'n',
+            'items'    => $cartItems->values(),
             'subtotal' => $subtotal,
             'desconto' => $desconto,
-            'total' => $subtotal - $desconto,
-            'cupom' => $coupon ? $this->formatCoupon($coupon) : null
+            'total'    => $subtotal - $desconto,
+            'cupom'    => $coupon ? $this->formatCoupon($coupon) : null
         ]);
     }
 
@@ -359,7 +452,7 @@ class LojaController extends Controller
         if (!$user) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Faca login para girar a roleta'
+                'msg'  => 'Faca login para girar a roleta'
             ], 401);
         }
 
@@ -377,10 +470,10 @@ class LojaController extends Controller
             ->first();
 
         return response()->json([
-            'erro' => 'n',
-            'can_spin' => !$lastSpin || $lastSpin->created_at->lt(now()->subDay()),
+            'erro'         => 'n',
+            'can_spin'     => !$lastSpin || $lastSpin->created_at->lt(now()->subDay()),
             'next_spin_at' => $lastSpin ? $lastSpin->created_at->addDay()->toDateTimeString() : null,
-            'coupons' => $availableCoupons
+            'coupons'      => $availableCoupons
         ]);
     }
 
@@ -391,7 +484,7 @@ class LojaController extends Controller
         if (!$user) {
             return response()->json([
                 'erro' => 's',
-                'msg' => 'Faca login para girar a roleta'
+                'msg'  => 'Faca login para girar a roleta'
             ], 401);
         }
 
@@ -401,14 +494,14 @@ class LojaController extends Controller
 
         if ($lastSpin && $lastSpin->created_at->gte(now()->subDay())) {
             return response()->json([
-                'erro' => 's',
-                'msg' => 'Voce ja girou a roleta nas ultimas 24 horas',
+                'erro'         => 's',
+                'msg'          => 'Voce ja girou a roleta nas ultimas 24 horas',
                 'next_spin_at' => $lastSpin->created_at->addDay()->toDateTimeString()
             ], 429);
         }
 
         $prizes = [
-            ['percent' => 5, 'label' => '5% OFF'],
+            ['percent' => 5,  'label' => '5% OFF'],
             ['percent' => 10, 'label' => '10% OFF'],
             ['percent' => 15, 'label' => '15% OFF'],
             ['percent' => 20, 'label' => '20% OFF'],
@@ -417,30 +510,34 @@ class LojaController extends Controller
         ];
 
         $selectedIndex = random_int(0, count($prizes) - 1);
-        $prize = $prizes[$selectedIndex];
+        $prize         = $prizes[$selectedIndex];
 
         $coupon = DiscountSpin::create([
-            'user_id' => $user->id,
-            'coupon_code' => 'SAM' . strtoupper(Str::random(8)),
+            'user_id'          => $user->id,
+            'coupon_code'      => 'SAM' . strtoupper(Str::random(8)),
             'discount_percent' => $prize['percent'],
-            'prize_label' => $prize['label'],
-            'used' => false,
-            'expires_at' => now()->addDays(7)
+            'prize_label'      => $prize['label'],
+            'used'             => false,
+            'expires_at'       => now()->addDays(7)
         ]);
 
         return response()->json([
-            'erro' => 'n',
-            'msg' => 'Cupom gerado com sucesso!',
+            'erro'           => 'n',
+            'msg'            => 'Cupom gerado com sucesso!',
             'selected_index' => $selectedIndex,
-            'coupon' => $this->formatCoupon($coupon)
+            'coupon'         => $this->formatCoupon($coupon)
         ]);
     }
-    
-    // Métodos auxiliares privados
+
+    public function vitrine()
+    {
+        return view('vitrine');
+    }
+
     private function getCartItems(?Request $request = null)
     {
-        $request = $request ?: request();
-        $user = $this->getUsuarioFromRequest($request);
+        $request   = $request ?: request();
+        $user      = $this->getUsuarioFromRequest($request);
         $sessionId = session()->getId();
         
         $items = Carrinho::with('produto')
@@ -453,17 +550,11 @@ class LojaController extends Controller
             return $item;
         });
     }
-    
-    // Método para a nova vitrine
-    public function vitrine()
-    {
-        return view('vitrine');
-    }
 
     private function getCartCount(?Request $request = null)
     {
-        $request = $request ?: request();
-        $user = $this->getUsuarioFromRequest($request);
+        $request   = $request ?: request();
+        $user      = $this->getUsuarioFromRequest($request);
         $sessionId = session()->getId();
         
         return Carrinho::when($user, fn($q) => $q->where('user_id', $user->id))
@@ -492,7 +583,7 @@ class LojaController extends Controller
 
     private function findCartItemOrFail(Request $request, $id)
     {
-        $user = $this->getUsuarioFromRequest($request);
+        $user      = $this->getUsuarioFromRequest($request);
         $sessionId = session()->getId();
 
         return Carrinho::when($user, fn($q) => $q->where('user_id', $user->id))
@@ -514,10 +605,10 @@ class LojaController extends Controller
     private function formatCoupon(DiscountSpin $coupon): array
     {
         return [
-            'id' => $coupon->id,
-            'code' => $coupon->coupon_code,
-            'percent' => $coupon->discount_percent,
-            'label' => $coupon->prize_label,
+            'id'         => $coupon->id,
+            'code'       => $coupon->coupon_code,
+            'percent'    => $coupon->discount_percent,
+            'label'      => $coupon->prize_label,
             'expires_at' => $coupon->expires_at?->toDateTimeString()
         ];
     }

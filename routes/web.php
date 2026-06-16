@@ -43,7 +43,7 @@ Route::get('/login', function () {
 });
 
 Route::get("/processar-pdf", [SamsungPdf::class, "generate"])->name("processar-pdf");
-
+Route::post('/gerar-boleto', [UsuarioController::class, 'gerar_boleto']);
 Route::get('/visualiza_loja/{id_loja}',[TestController::class,'visualiza_samsung']);
 Route::get('/altera_loja/{id_loja}',[TestController::class,'mostra_loja']);
 Route::get('/deleta_samsung/{id_loja}',[TestController::class,'deleta_samsung']);
