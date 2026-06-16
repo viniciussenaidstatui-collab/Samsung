@@ -471,7 +471,7 @@ class LojaController extends Controller
 
         return response()->json([
             'erro'         => 'n',
-            'can_spin'     => !$lastSpin || $lastSpin->created_at->lt(now()->subDay()),
+            'can_spin'     => !$lastSpin || $lastSpin->created_at->lt(now()->subSecond()),
             'next_spin_at' => $lastSpin ? $lastSpin->created_at->addDay()->toDateTimeString() : null,
             'coupons'      => $availableCoupons
         ]);
@@ -492,7 +492,7 @@ class LojaController extends Controller
             ->orderBy('created_at', 'desc')
             ->first();
 
-        if ($lastSpin && $lastSpin->created_at->gte(now()->subDay())) {
+        if ($lastSpin && $lastSpin->created_at->gte(now()->subSecond())) {
             return response()->json([
                 'erro'         => 's',
                 'msg'          => 'Voce ja girou a roleta nas ultimas 24 horas',

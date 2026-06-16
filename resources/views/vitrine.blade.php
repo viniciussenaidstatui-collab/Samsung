@@ -10,7 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Motion Library para animações -->
+    <script src="https://cdn.jsdelivr.net/npm/motion@11.11.17/dist/motion.js"></script>
     
     <style>
         :root {
@@ -64,6 +66,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            position: relative;
         }
 
         .nav-link-custom:hover {
@@ -82,12 +85,24 @@
             padding: 2px 6px;
             font-size: 0.7rem;
             font-weight: bold;
+            animation: badgePop 0.3s ease;
+        }
+
+        @keyframes badgePop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
         }
 
         /* Carrossel */
         .carousel-container {
             margin-bottom: 3rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .carousel-inner {
+            border-radius: 0 0 20px 20px;
+            overflow: hidden;
         }
 
         .carousel-item img {
@@ -146,6 +161,7 @@
             margin-bottom: 30px;
             height: 100%;
             border: 1px solid rgba(126, 34, 206, 0.1);
+            position: relative;
         }
 
         .product-card:hover {
@@ -233,6 +249,13 @@
             color: white;
         }
 
+        .btn-purple:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-outline-purple {
             border: 2px solid var(--purple-dark);
             color: var(--purple-dark);
@@ -243,6 +266,9 @@
             transition: all 0.3s;
             width: 100%;
             margin-top: 8px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         .btn-outline-purple:hover {
@@ -287,6 +313,7 @@
             border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s;
+            cursor: pointer;
         }
 
         .pagination-custom button:hover {
@@ -299,12 +326,56 @@
             color: white;
         }
 
+        /* Produto voando - animação */
+        .flying-product {
+            position: fixed;
+            width: 120px;
+            height: 120px;
+            z-index: 9999;
+            pointer-events: none;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 20px 60px rgba(126, 34, 206, 0.4);
+            padding: 15px;
+            object-fit: contain;
+            transition: none;
+        }
+
+        /* Rastro do produto */
+        .flight-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(126, 34, 206, 0.6), rgba(126, 34, 206, 0));
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .basket-ring {
+            position: fixed;
+            border: 3px solid var(--purple-dark);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 9998;
+        }
+
         /* Footer */
         footer {
             background: linear-gradient(135deg, var(--purple-dark), #6b21a5);
             color: white;
             padding: 2rem 0;
             margin-top: 2rem;
+        }
+
+        footer a {
+            color: rgba(255,255,255,0.7);
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: white;
         }
 
         /* Responsivo */
@@ -317,6 +388,11 @@
             }
             .section-title h2 {
                 font-size: 1.5rem;
+            }
+            .flying-product {
+                width: 80px;
+                height: 80px;
+                padding: 10px;
             }
         }
     </style>
@@ -341,8 +417,8 @@
                 <a href="/roleta" class="nav-link-custom">
                     <i class="fa-solid fa-gift"></i> Roleta
                 </a>
-                <a href="/carrinho" class="nav-link-custom position-relative">
-                    <i class="fa-solid fa-cart-shopping"></i> Carrinho
+                <a href="/carrinho" class="nav-link-custom position-relative" id="cartLink">
+                    <i class="fa-solid fa-cart-shopping" id="cartIcon"></i> Carrinho
                     <span class="cart-badge" id="cartCount" style="display: none;">0</span>
                 </a>
                 <a href="#" id="logoutBtn" class="nav-link-custom">
@@ -354,38 +430,48 @@
 </nav>
 
 <!-- Carrossel -->
-<div class="carousel-inner">
-    <div class="carousel-item active">
-        <img src="https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=1920&h=600&fit=crop" 
-             class="d-block w-100" 
-             alt="Galaxy S24 Ultra"
-             style="object-fit: cover; height: 400px;">
-        <div class="carousel-caption d-none d-md-block">
-            <h3>Galaxy S24 Ultra</h3>
-            <p>O smartphone mais avançado com IA integrada</p>
+<div class="carousel-container">
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=1920&h=600&fit=crop" 
+                     class="d-block w-100" 
+                     alt="Galaxy S24 Ultra">
+                <div class="carousel-caption d-none d-md-block">
+                    <h3>Galaxy S24 Ultra</h3>
+                    <p>O smartphone mais avançado com IA integrada</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=1920&h=600&fit=crop" 
+                     class="d-block w-100" 
+                     alt="Galaxy Z Fold5">
+                <div class="carousel-caption d-none d-md-block">
+                    <h3>Galaxy Z Fold5</h3>
+                    <p>Dobrável com tela de 7.6" e multitarefa avançada</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=1920&h=600&fit=crop" 
+                     class="d-block w-100" 
+                     alt="Galaxy Watch6">
+                <div class="carousel-caption d-none d-md-block">
+                    <h3>Galaxy Watch6 Classic</h3>
+                    <p>O relógio inteligente que cuida da sua saúde</p>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="carousel-item">
-        <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=1920&h=600&fit=crop" 
-             class="d-block w-100" 
-             alt="Galaxy Z Fold5"
-             style="object-fit: cover; height: 400px;">
-        <div class="carousel-caption d-none d-md-block">
-            <h3>Galaxy Z Fold5</h3>
-            <p>Dobrável com tela de 7.6" e multitarefa avançada</p>
-        </div>
-    </div>
-    <div class="carousel-item">
-        <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=1920&h=600&fit=crop" 
-             class="d-block w-100" 
-             alt="Galaxy Watch6"
-             style="object-fit: cover; height: 400px;">
-        <div class="carousel-caption d-none d-md-block">
-            <h3>Galaxy Watch6 Classic</h3>
-            <p>O relógio inteligente que cuida da sua saúde</p>
-        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Próximo</span>
+        </button>
     </div>
 </div>
+
 <!-- Seção de Produtos -->
 <div class="products-section">
     <div class="container">
@@ -437,8 +523,167 @@
 
 <script>
 let currentPage = 1;
-let itemsPerPage = 6; // 6 produtos por página (2 linhas de 3)
+let itemsPerPage = 6;
+let isAnimating = false;
 
+// ============== ANIMAÇÃO DO PRODUTO VOANDO ==============
+function animateProductToCart(productElement, produtoId) {
+    if (isAnimating) return;
+    isAnimating = true;
+
+    const productImg = productElement.querySelector('.product-img');
+    const imgSrc = productImg.src;
+    const productRect = productImg.getBoundingClientRect();
+    
+    // Criar elemento para voar
+    const flyingProduct = document.createElement('img');
+    flyingProduct.src = imgSrc;
+    flyingProduct.className = 'flying-product';
+    
+    // Posicionar exatamente sobre o produto original
+    flyingProduct.style.width = productRect.width + 'px';
+    flyingProduct.style.height = productRect.height + 'px';
+    flyingProduct.style.left = productRect.left + 'px';
+    flyingProduct.style.top = productRect.top + 'px';
+    flyingProduct.style.borderRadius = '16px';
+    
+    document.body.appendChild(flyingProduct);
+
+    // Criar rastro de partículas
+    const trailCount = 20;
+    const trails = [];
+    for (let i = 0; i < trailCount; i++) {
+        const trail = document.createElement('div');
+        trail.className = 'flight-trail';
+        trail.style.width = (4 + Math.random() * 8) + 'px';
+        trail.style.height = trail.style.width;
+        trail.style.opacity = '0';
+        document.body.appendChild(trail);
+        trails.push(trail);
+    }
+
+    // Criar anel de impacto
+    const ring = document.createElement('div');
+    ring.className = 'basket-ring';
+    const cartRect = document.querySelector('#cartLink').getBoundingClientRect();
+    ring.style.left = (cartRect.left + cartRect.width/2 - 35) + 'px';
+    ring.style.top = (cartRect.top + cartRect.height/2 - 35) + 'px';
+    ring.style.width = '70px';
+    ring.style.height = '70px';
+    document.body.appendChild(ring);
+
+    // Calcular destino (carrinho - canto superior direito)
+    const cartIcon = document.querySelector('#cartIcon');
+    const cartPos = cartIcon.getBoundingClientRect();
+    
+    // Ponto de controle para o arco (mais alto e à direita)
+    const controlX = (productRect.left + productRect.width/2 + cartPos.left + cartPos.width/2) / 2 + 100;
+    const controlY = Math.min(productRect.top - 200, cartPos.top - 200);
+    
+    // Distância a percorrer
+    const dx = cartPos.left + cartPos.width/2 - (productRect.left + productRect.width/2);
+    const dy = cartPos.top + cartPos.height/2 - (productRect.top + productRect.height/2);
+    
+    // Duração da animação (mais longa para dar sensação de viagem)
+    const duration = 0.9;
+
+    // Animar com Motion em trajetória parabólica
+    const flyingAnim = Motion.animate(
+        flyingProduct,
+        {
+            x: [0, dx * 0.4, dx * 0.7, dx],
+            y: [0, -200, -150, dy],
+            scale: [1, 0.9, 0.7, 0.3],
+            opacity: [1, 1, 1, 0.8],
+            rotate: [0, 15, -10, 0]
+        },
+        {
+            duration: duration,
+            ease: [0.42, 0, 0.58, 1],
+            times: [0, 0.3, 0.6, 1]
+        }
+    );
+
+    // Animar rastro
+    trails.forEach((trail, index) => {
+        const delay = (index / trailCount) * duration * 0.8;
+        const trailX = (index / trailCount) * dx * 0.7;
+        const trailY = -200 * (1 - index / trailCount) * 0.5;
+        
+        setTimeout(() => {
+            Motion.animate(
+                trail,
+                {
+                    x: [0, dx * 0.3 + (Math.random() - 0.5) * 50],
+                    y: [0, -150 + (Math.random() - 0.5) * 50],
+                    opacity: [1, 0],
+                    scale: [1, 0]
+                },
+                {
+                    duration: 0.5,
+                    ease: "easeOut"
+                }
+            );
+        }, delay * 1000);
+    });
+
+    // Aguardar fim da animação
+    setTimeout(() => {
+        // Remover elementos
+        flyingProduct.remove();
+        trails.forEach(trail => trail.remove());
+
+        // Efeito de anel no carrinho
+        Motion.animate(
+            ring,
+            { scale: [1, 4], opacity: [0.8, 0] },
+            { duration: 0.6, ease: "easeOut" }
+        );
+
+        // Sacudir o carrinho com mais intensidade
+        const cartNav = document.querySelector('#cartLink');
+        Motion.animate(
+            cartNav,
+            { 
+                x: [-8, 8, -6, 6, -4, 4, -2, 2, 0],
+                scale: [1, 1.1, 1, 1.05, 1]
+            },
+            { 
+                duration: 0.5, 
+                ease: "easeOut" 
+            }
+        );
+
+        // Efeito de brilho no carrinho
+        Motion.animate(
+            cartIcon,
+            { 
+                color: ['#ff4444', '#ff6b6b', '#ff4444', '#ff6b6b', 'white'],
+                scale: [1, 1.3, 1, 1.2, 1]
+            },
+            { 
+                duration: 0.6, 
+                ease: "easeOut" 
+            }
+        );
+
+        // Atualizar badge com animação
+        atualizarCarrinho();
+        
+        // Remover o anel após a animação
+        setTimeout(() => {
+            ring.remove();
+        }, 700);
+
+        isAnimating = false;
+
+    }, duration * 1000 + 100);
+
+    // Adicionar ao carrinho via AJAX
+    addToCart(produtoId);
+}
+
+// ============== FUNÇÕES DE PRODUTOS ==============
 function getStockClass(estoque) {
     if (estoque > 20) return 'stock-high';
     if (estoque > 5) return 'stock-medium';
@@ -484,7 +729,6 @@ function carregarProdutos(page = 1) {
                         <div class="text-center py-5">
                             <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
                             <h4>Nenhum produto cadastrado ainda</h4>
-                            <a href="/index" class="btn btn-purple mt-3">Cadastrar Produto</a>
                         </div>
                     `);
                     $('#paginationContainer').html('');
@@ -501,7 +745,7 @@ function carregarProdutos(page = 1) {
                     
                     html += `
                         <div class="col-md-4 col-sm-6">
-                            <div class="product-card">
+                            <div class="product-card" data-produto-id="${produto.id}">
                                 <img src="${produto.imagem_url || 'https://images.samsung.com/is/image/samsung/p6pim/br/feature/163786000/br-feature-gallery-samsung-zk-545150600?$684_547_JPG$'}" 
                                      class="product-img" 
                                      alt="${produto.aparelho}">
@@ -514,14 +758,14 @@ function carregarProdutos(page = 1) {
                                         <small>ou 12x s/ juros</small>
                                     </div>
                                     ${estoque > 0 ? `
-                                        <button class="btn-purple add-to-cart" data-id="${produto.id}">
+                                        <button class="btn-purple add-to-cart-btn" data-id="${produto.id}">
                                             <i class="fa-solid fa-cart-plus me-2"></i>Adicionar ao Carrinho
                                         </button>
                                         <a href="/loja/produto/${produto.id}" class="btn-outline-purple text-center d-inline-block">
                                             <i class="fa-regular fa-eye me-2"></i>Ver Detalhes
                                         </a>
                                     ` : `
-                                        <button class="btn-purple" disabled style="background: #ccc; cursor: not-allowed;">
+                                        <button class="btn-purple" disabled>
                                             <i class="fa-solid fa-times me-2"></i>Indisponível
                                         </button>
                                     `}
@@ -572,47 +816,13 @@ function carregarProdutos(page = 1) {
     });
 }
 
-function atualizarCarrinho() {
-    let token = $.cookie('token');
-    if (token) {
-        $.ajax({
-            url: "/api/carrinho/count",
-            method: "GET",
-            headers: { 'Authorization': 'Bearer ' + token },
-            success: function(res) {
-                if (res.count > 0) {
-                    $('#cartCount').text(res.count).show();
-                } else {
-                    $('#cartCount').hide();
-                }
-            }
-        });
-    }
-}
-
 function addToCart(produtoId) {
     let token = $.cookie('token');
     
     if (!token) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Faça login',
-            text: 'Você precisa estar logado para comprar',
-            confirmButtonColor: '#7e22ce'
-        }).then(() => {
-            window.location.href = '/login';
-        });
+        window.location.href = '/login';
         return;
     }
-    
-    Swal.fire({
-        title: 'Adicionando...',
-        text: 'Aguarde um momento',
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
     
     $.ajax({
         url: "/api/carrinho/adicionar",
@@ -624,34 +834,39 @@ function addToCart(produtoId) {
         },
         success: function(res) {
             if (res.erro === 'n') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Adicionado!',
-                    text: res.msg,
-                    timer: 1500,
-                    showConfirmButton: false,
-                    background: '#faf5ff'
-                });
-                atualizarCarrinho();
+                // Badge já será atualizado pela animação
             } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro',
-                    text: res.msg,
-                    confirmButtonColor: '#7e22ce'
-                });
+                console.error('Erro ao adicionar:', res.msg);
             }
         },
         error: function(xhr) {
-            let msg = xhr.responseJSON?.msg || 'Erro ao adicionar produto';
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro',
-                text: msg,
-                confirmButtonColor: '#7e22ce'
-            });
+            console.error('Erro ao adicionar produto');
         }
     });
+}
+
+function atualizarCarrinho() {
+    let token = $.cookie('token');
+    if (token) {
+        $.ajax({
+            url: "/api/carrinho/count",
+            method: "GET",
+            headers: { 'Authorization': 'Bearer ' + token },
+            success: function(res) {
+                const badge = $('#cartCount');
+                if (res.count > 0) {
+                    badge.text(res.count).show();
+                    // Remover animação e reaplicar para efeito de pop
+                    badge.css('animation', 'none');
+                    setTimeout(() => {
+                        badge.css('animation', 'badgePop 0.3s ease');
+                    }, 10);
+                } else {
+                    badge.hide();
+                }
+            }
+        });
+    }
 }
 
 $(document).ready(function() {
@@ -664,26 +879,35 @@ $(document).ready(function() {
     carregarProdutos(currentPage);
     atualizarCarrinho();
     
-    $(document).on('click', '.add-to-cart', function() {
-        addToCart($(this).data('id'));
+    // Evento para adicionar ao carrinho com animação
+    $(document).on('click', '.add-to-cart-btn', function() {
+        if (isAnimating) return;
+        
+        const button = $(this);
+        const produtoId = button.data('id');
+        const productCard = button.closest('.product-card');
+        
+        // Desabilitar botão durante a animação
+        button.prop('disabled', true);
+        button.html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Enviando...');
+        
+        // Iniciar animação
+        animateProductToCart(productCard[0], produtoId);
+        
+        // Reabilitar botão após a animação
+        setTimeout(() => {
+            button.prop('disabled', false);
+            button.html('<i class="fa-solid fa-cart-plus me-2"></i>Adicionar ao Carrinho');
+        }, 1200);
     });
     
     $('#logoutBtn').click(function(e) {
         e.preventDefault();
-        Swal.fire({
-            title: 'Deseja sair?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#7e22ce',
-            cancelButtonColor: '#dc3545',
-            confirmButtonText: 'Sim, sair'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.removeCookie('token', { path: '/' });
-                localStorage.removeItem('userEmail');
-                window.location.href = '/login';
-            }
-        });
+        if (confirm('Deseja sair?')) {
+            $.removeCookie('token', { path: '/' });
+            localStorage.removeItem('userEmail');
+            window.location.href = '/login';
+        }
     });
 });
 </script>

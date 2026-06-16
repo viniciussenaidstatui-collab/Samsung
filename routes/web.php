@@ -9,6 +9,29 @@ use App\Http\Controllers\LojaController;
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
+Route::get('/BL/loki', function () {
+    return view('BL.loki');
+})->name('loki');
+
+Route::get('/BL/hugo', function () {
+    return view('BL.hugo');
+})->name('hugo');
+
+Route::get('/BL/bunny', function () {
+    return view('BL.bunny');
+})->name('bunny');
+
+Route::get('/BL/lorenzo', function () {
+    return view('BL.lorenzo');
+})->name('lorenzo');
+
+Route::get('/BL/sae', function () {
+    return view('BL.sae');
+})->name('sae');
+
+Route::get('/BL/kaiser', function () {
+    return view('BL.kaiser');
+})->name('kaiser');
 
 Route::get('/roleta', [LojaController::class, 'spinPage'])->name('spin.index');
 

@@ -259,6 +259,7 @@
             box-shadow: 0 20px 60px rgba(111,66,193,0.15);
             border: 2px solid rgba(111,66,193,0.1);
             cursor: grab;
+            user-select: none;
         }
 
         #canvas-container:active {
@@ -269,6 +270,7 @@
             display: block;
             width: 100% !important;
             height: 100% !important;
+            pointer-events: auto;
         }
 
         /* Anel decorativo */
@@ -483,9 +485,29 @@
                 height: 200px;
             }
         }
+
+        /* Tooltip para as faces */
+        .face-tooltip {
+            position: fixed;
+            background: rgba(45, 27, 78, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 9999;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
     </style>
 </head>
 <body>
+
+<!-- Tooltip para as faces -->
+<div class="face-tooltip" id="faceTooltip"></div>
 
 <nav class="navbar-custom">
     <!-- Primeira Linha - Logo e Usuário -->
@@ -657,11 +679,12 @@
 
 <script>
 // ════════════════════════════════════════════════
-// CUBO 3D COM IMAGENS PERSONALIZADAS EM CADA FACE
+// CUBO 3D COM CLIQUE NAS FACES
 // ════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('canvas-container');
+    const tooltip = document.getElementById('faceTooltip');
     
     if (!container) {
         console.error('Container não encontrado!');
@@ -681,131 +704,257 @@ document.addEventListener('DOMContentLoaded', function() {
     camera.lookAt(0, 0, 0);
 
     // 3. RENDERIZADOR
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ 
+        antialias: true,
+        alpha: false 
+    });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
     // ════════════════════════════════════════════════
-    // 4. IMAGENS PARA CADA FACE DO CUBO
-    //    (Use URLs de imagens ou base64)
+    // 4. IMAGENS PARA CADA FACE DO CUBO (SEM BRILHO)
     // ════════════════════════════════════════════════
     
-    // Mapeamento das faces do cubo:
-    // Ordem: +X (direita), -X (esquerda), +Y (cima), -Y (baixo), +Z (frente), -Z (trás)
-    
-    // ════════════════════════════════════════════════
-// 4. IMAGENS PARA CADA FACE DO CUBO
-//    (Suas imagens locais na pasta public/images/cubo/)
-// ════════════════════════════════════════════════
+    const imagens = [
+        '/images/cubo/Bunny.jpg',
+        '/images/cubo/Hugo.jpg',
+        '/images/cubo/Kaiser.jpg',
+        '/images/cubo/Loki.jpg',
+        '/images/cubo/Lorenzo.jpg',
+        '/images/cubo/Sae.jpg'
+    ];
 
-const imagens = [
-    // Face 1: Direita (+X)
-    '/images/cubo/Bunny.jpg',
-    
-    // Face 2: Esquerda (-X)
-    '/images/cubo/Hugo.jpg',
-    
-    // Face 3: Cima (+Y)
-    '/images/cubo/Kaiser.jpg',
-    
-    // Face 4: Baixo (-Y)
-    '/images/cubo/Loki.jpg',
-    
-    // Face 5: Frente (+Z)
-    '/images/cubo/Lorenzo.jpg',
-    
-    // Face 6: Trás (-Z)
-    '/images/cubo/Sae.jpg'
-];
-    // Função para carregar uma textura a partir de uma URL
+    // Nomes para exibir no tooltip
+    const nomesFaces = [
+        'Bunny',
+        'Hugo',
+        'Kaiser',
+        'Loki',
+        'Lorenzo',
+        'Sae'
+    ];
+
+    // URLs para redirecionamento
+    const urlsFaces = [
+        '/BL/bunny',
+        '/BL/hugo',
+        '/BL/kaiser',
+        '/BL/loki',
+        '/BL/lorenzo',
+        '/BL/sae'
+    ];
+
     function carregarTextura(url) {
-        return new THREE.TextureLoader().load(url);
+        const loader = new THREE.TextureLoader();
+        // Configura a textura para não ter bordas estranhas
+        const texture = loader.load(url);
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.wrapS = THREE.ClampToEdgeWrapping;
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+        return texture;
     }
 
-    // Cria um material para cada face com sua respectiva imagem
-    const materials = imagens.map(url => 
+    // ════════════════════════════════════════════════
+    // MATERIAIS SEM BRILHO (roughness alto, metalness 0)
+    // ════════════════════════════════════════════════
+    const materials = imagens.map((url, index) => 
         new THREE.MeshStandardMaterial({
             map: carregarTextura(url),
-            roughness: 0.3,
-            metalness: 0.1,
-            side: THREE.DoubleSide
+            roughness: 0.9,      // Alto = sem brilho
+            metalness: 0.0,      // Zero = sem efeito metálico
+            emissive: null,      // Sem emissividade
+            emissiveIntensity: 0,
+            side: THREE.DoubleSide,
+            flatShading: false
         })
     );
 
-    // 5. CRIA O CUBO COM OS MATERIAIS
+    // 5. CRIA O CUBO
     const geometry = new THREE.BoxGeometry(1.8, 1.8, 1.8);
     const cube = new THREE.Mesh(geometry, materials);
     cube.castShadow = true;
     cube.receiveShadow = true;
     scene.add(cube);
 
-    // 6. LUZES
-    const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+    // 6. LUZES (mais suaves para não criar brilho)
+    const ambientLight = new THREE.AmbientLight(0x404060, 0.8);
     scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 2);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
     mainLight.position.set(5, 5, 5);
     mainLight.castShadow = true;
     scene.add(mainLight);
 
-    const fillLight = new THREE.DirectionalLight(0x8888ff, 0.8);
+    const fillLight = new THREE.DirectionalLight(0x8888ff, 0.5);
     fillLight.position.set(-5, 0, 5);
     scene.add(fillLight);
 
-    const rimLight = new THREE.DirectionalLight(0x6f42c1, 0.5);
-    rimLight.position.set(-3, -2, -5);
-    scene.add(rimLight);
+    // ════════════════════════════════════════════════
+    // 7. RAYCASTER PARA DETECTAR CLIQUE NAS FACES
+    // ════════════════════════════════════════════════
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
-    // 7. ANIMAÇÃO
-    let rotationSpeedY = 0.012;
-    let rotationSpeedX = 0.004;
+    // Função para obter a face clicada
+    function getFaceIntersection(event) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject(cube);
+
+        if (intersects.length > 0) {
+            const intersect = intersects[0];
+            const faceIndex = intersect.face.materialIndex;
+            return faceIndex;
+        }
+        return null;
+    }
+
+    // Evento de clique no canvas
+    renderer.domElement.addEventListener('click', function(event) {
+        const faceIndex = getFaceIntersection(event);
+        
+        if (faceIndex !== null && faceIndex < urlsFaces.length) {
+            // Efeito visual de clique (opcional)
+            const originalColor = materials[faceIndex].color ? materials[faceIndex].color.getHex() : null;
+            
+            // Mostra um feedback visual (pisca a face)
+            const originalEmissive = materials[faceIndex].emissive ? materials[faceIndex].emissive.getHex() : null;
+            materials[faceIndex].emissive = new THREE.Color(0x6f42c1);
+            materials[faceIndex].emissiveIntensity = 0.3;
+            
+            setTimeout(() => {
+                materials[faceIndex].emissive = new THREE.Color(0x000000);
+                materials[faceIndex].emissiveIntensity = 0;
+            }, 300);
+            
+            // Redireciona para a página
+            const url = urlsFaces[faceIndex];
+            console.log(`🔗 Redirecionando para: ${url}`);
+            
+            // Usa SweetAlert para confirmar antes de redirecionar
+            Swal.fire({
+                title: `Ir para ${nomesFaces[faceIndex]}?`,
+                text: `Você será redirecionado para a página de ${nomesFaces[faceIndex]}.`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#6f42c1',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: 'Ir agora',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+    });
+
+    // ════════════════════════════════════════════════
+    // 8. TOOLTIP AO PASSAR O MOUSE NAS FACES
+    // ════════════════════════════════════════════════
+    renderer.domElement.addEventListener('mousemove', function(event) {
+        const faceIndex = getFaceIntersection(event);
+        
+        if (faceIndex !== null && faceIndex < nomesFaces.length) {
+            tooltip.textContent = `Clique para ir para ${nomesFaces[faceIndex]}`;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (event.clientX + 15) + 'px';
+            tooltip.style.top = (event.clientY - 10) + 'px';
+            renderer.domElement.style.cursor = 'pointer';
+        } else {
+            tooltip.style.display = 'none';
+            renderer.domElement.style.cursor = 'grab';
+        }
+    });
+
+    renderer.domElement.addEventListener('mouseleave', function() {
+        tooltip.style.display = 'none';
+    });
+
+    // ════════════════════════════════════════════════
+    // 9. CONTROLE DE ROTAÇÃO POR MOUSE (DRAG)
+    // ════════════════════════════════════════════════
+    
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    let rotationX = 0;
+    let rotationY = 0;
+    const rotationSpeed = 0.8;
+    let velocityX = 0;
+    let velocityY = 0;
+
+    container.addEventListener('mousedown', (event) => {
+        isDragging = true;
+        previousMousePosition.x = event.clientX;
+        previousMousePosition.y = event.clientY;
+        container.style.cursor = 'grabbing';
+        tooltip.style.display = 'none';
+    });
+
+    window.addEventListener('mousemove', (event) => {
+        if (!isDragging) return;
+        
+        const deltaX = event.clientX - previousMousePosition.x;
+        const deltaY = event.clientY - previousMousePosition.y;
+        
+        velocityX = deltaY * 0.01 * rotationSpeed * 0.9;
+        velocityY = deltaX * 0.01 * rotationSpeed * 0.9;
+        
+        rotationY += deltaX * 0.01 * rotationSpeed;
+        rotationX += deltaY * 0.01 * rotationSpeed;
+        
+        cube.rotation.x = rotationX;
+        cube.rotation.y = rotationY;
+        
+        previousMousePosition.x = event.clientX;
+        previousMousePosition.y = event.clientY;
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            container.style.cursor = 'grab';
+        }
+    });
+
+    // ════════════════════════════════════════════════
+    // 10. LOOP DE ANIMAÇÃO
+    // ════════════════════════════════════════════════
+    
     let time = 0;
 
-    // Efeito de mouse
-    let mouseX = 0, mouseY = 0;
-    let targetRotX = 0, targetRotY = 0;
-
-    container.addEventListener('mousemove', (event) => {
-        const rect = container.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - 0.5;
-        const y = (event.clientY - rect.top) / rect.height - 0.5;
-        mouseX = x * 0.4;
-        mouseY = y * 0.4;
-    });
-
-    container.addEventListener('mouseleave', () => {
-        mouseX = 0;
-        mouseY = 0;
-    });
-
-    // Loop principal
     function animate() {
         requestAnimationFrame(animate);
         
         time += 0.01;
         
-        // Rotação automática
-        cube.rotation.y += rotationSpeedY;
-        cube.rotation.x += rotationSpeedX;
+        // Inércia
+        if (!isDragging) {
+            if (Math.abs(velocityX) > 0.0001 || Math.abs(velocityY) > 0.0001) {
+                rotationX += velocityX;
+                rotationY += velocityY;
+                velocityX *= 0.97;
+                velocityY *= 0.97;
+                cube.rotation.x = rotationX;
+                cube.rotation.y = rotationY;
+            }
+        }
         
         // Flutuação
         cube.position.y = Math.sin(time * 0.6) * 0.1;
-        
-        // Efeito de mouse
-        targetRotX += (mouseY - targetRotX) * 0.05;
-        targetRotY += (mouseX - targetRotY) * 0.05;
-        
-        cube.rotation.x += targetRotX * 0.002;
-        cube.rotation.y += targetRotY * 0.002;
         
         renderer.render(scene, camera);
     }
     
     animate();
 
-    // 8. RESPONSIVO
+    // 11. RESPONSIVO
     function resizeRenderer() {
         const newWidth = container.clientWidth;
         const newHeight = container.clientHeight;
@@ -822,8 +971,9 @@ const imagens = [
     const resizeObserver = new ResizeObserver(() => resizeRenderer());
     resizeObserver.observe(container);
 
-    console.log('🚀 Cubo 3D com imagens carregado com sucesso!');
+    console.log('🚀 Cubo 3D com clique nas faces carregado!');
     console.log('📐 Dimensões:', width, 'x', height);
+    console.log('🖱️ Clique em cada face para navegar!');
 });
 
 // ════════════════════════════════════════════════
